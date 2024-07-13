@@ -1,0 +1,151 @@
+
+/* GENERAL */
+
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: rgb(240, 248, 255);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+/* NAVBAR */
+
+.navbar{
+    display: flex;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    justify-content: space-between;
+    height: 50px;
+}
+
+.icon a{
+    font-size: 50px;
+    margin-left: 10px;
+    margin-right: 20px;
+    color: rgb(255, 0, 0);
+}
+
+.icon a:hover{
+    color: rgba(3, 213, 49, 0.658);
+}
+
+.options ul{
+    display: flex;
+    list-style: none;
+    margin-right: 20px;
+    align-items: center;
+}
+
+.options ul a{
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 10px 8px 10px;
+    font-size: 10px;
+    text-align: center;
+}
+
+.options ul a:hover{
+    transition: 0.5s;
+    background-color: rgba(221, 255, 3, 0.247);
+}
+
+
+/* FOOTER */
+
+.footer{
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+}
+
+.footer ul{
+    list-style: none;
+    display: flex;
+    gap: 100px;
+    cursor: default;
+}
+
+
+/* HOME PAGE */
+
+.welcome_container{
+    display: flex;
+    background-color: rgb(240, 248, 255);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 340px;
+}
+
+.welcome{
+    background-color: rgb(255, 255, 255);
+    width: 60%;
+    border-radius: 2px;
+}
+
+.welcome ul{
+    list-style: none;
+    padding: 70px 0px;
+    cursor: default;
+}
+
+.welcome h2{
+    color: rgb(30, 193, 218);
+    margin-bottom: 5px;
+}
+
+#page_name{
+    color: rgba(255, 0, 0, 0.651);
+    margin-top: 30px;
+    text-decoration: overline;
+}
+
+
+/* OPTIONS */
+
+.form_container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 340px;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+}
+
+.form form input{
+    margin-bottom: 15px;
+}
+
+.button{
+    background-color: rgba(0, 255, 55, 0.658);
+    padding: 8px 10px 8px 10px;
+    font-size: 15px;
+    border: none;
+    border-radius: 15px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.button a{
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+
+.button:hover{
+    transition: 0.3s;
+    transform: scale(1.1);
+}
