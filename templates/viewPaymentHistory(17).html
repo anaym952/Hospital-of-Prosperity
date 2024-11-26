@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOP - View Payment History</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="icon">
+            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
+        </div>
+        <div class="options">
+            <ul>
+                <a href="{{url_for('deposit_money')}}"><li>Deposit Money</li></a>
+                <a href="{{url_for('withdraw_money')}}"><li>Withdraw Money</li></a>
+                <a href="{{url_for('book_appointment')}}"><li>Book Appointment</li></a>
+                <a href="{{url_for('view_upcoming_appointments_patient')}}">View Upcoming Appointments</a>
+                <a href="{{url_for('view_pending_payments')}}"><li>Pending Payments</li></a>
+                <a href="{{url_for('view_payment_history')}}"><li>Payment History</li></a>
+                <a href="{{url_for('recieve_test_results')}}"><li>Test Results</li></a>
+                <a href="{{url_for('recieve_prescriptions')}}"><li>Prescriptions</li></a>
+                <a href="{{url_for('process_payments')}}"><li>Process Payments</li></a>
+                <a href="{{url_for('view_patient_portal')}}"><li>Patient Portal</li></a>
+                <a href="{{url_for('logout')}}"><li>Logout</li></a>
+            </ul>
+        </div>
+    </div>
+
+    <div class="form_container">
+        <div class="form">
+            <form>
+                <button class="button">View Payment History</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer_container">
+        <div class="footer">
+            <ul>
+                <li>Email Us: bossmode2566@gmail.com</li>
+                <li>Phone Number: (Provided Upon Request)</li>
+            </ul>
+        </div>
+    </div>
+    
+</body>
+
+</html>

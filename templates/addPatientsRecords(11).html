@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOP - Add Patients' Records</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="icon">
+            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
+        </div>
+        <div class="options">
+            <ul>
+                <a href="{{url_for('send_availability')}}"><li>Manage Availability</li></a>
+                <a href="{{url_for('view_upcoming_appointments_doctor')}}"><li>View Upcoming Appointments</li></a>
+                <a href="{{url_for('add_patient_records')}}"><li>Add Patients' Records</li></a>
+                <a href="{{url_for('view_patient_records')}}"><li>View Patients' Records</li></a>
+                <a href="{{url_for('logout')}}"><li>Logout</li></a>
+            </ul>
+        </div>
+    </div>
+
+    <div class="form_container">
+        <div class="form">
+            <form>
+                <label for="patient_name">Patient Name:</label>
+                <input type="text">
+                <br>
+                <label for="patient_age">Patient Age:</label>
+                <input type="number">
+                <br>
+                <label for="patient_gender">Patient Gender:</label>
+                <input type="radio">Male 
+                <input type="radio">Female
+                <br>
+                <label for="medical_history">Has the patient had any medical issues before?</label>
+                <input type="radio">Yes 
+                <input type="radio">No
+                <br>
+                <button class="button">Add Patient's Record</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="footer_container">
+        <div class="footer">
+            <ul>
+                <li>Email Us: bossmode2566@gmail.com</li>
+                <li>Phone Number: (Provided Upon Request)</li>
+            </ul>
+        </div>
+    </div>
+    
+</body>
+
+</html>

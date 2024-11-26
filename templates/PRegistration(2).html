@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOP - Register Patient</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="icon">
+            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
+        </div>
+        <div class="options">
+            <ul>
+                <a href="{{url_for('register_patient')}}"><li>Register Patient</li></a>
+                <a href="{{url_for('patient_login')}}"><li>Patient Login</li></a>
+                <a href="{{url_for('register_doctor')}}"><li>Register Doctor</li></a>
+                <a href="{{url_for('doctor_login')}}"><li>Doctor Login</li></a>
+                <a href="{{url_for('admin_login')}}"><li>Admin Login</li></a>
+            </ul>
+        </div>
+    </div>
+
+    <div class="form_container">
+        <div class="form">
+            <form method="POST">
+                <label for="account_name">Name:</label>
+                <input type="text" id="account_name" name="account_name" required>
+                <br>
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required>
+                <br>
+                <label for="gender">Gender:</label>
+                <input type="radio" id="gender" name="gender" value="male" required>Male
+                <input type="radio" id="gender" name="gender" value="female" required>Female
+                <br>
+                <label for="phone_number">Phone Number:</label>
+                <input type="number" id="phone_number" name="phone_number" required>
+                <br>
+                <label for="medical_history">Medical History:</label>
+                <input type="radio" id="medical_history" name="medical_history" value="yes" required>Yes
+                <input type="radio" id="medical_history" name="medical_history" value="no" required>No
+                <br>
+                <label for="initial_deposit">Initial Deposit:</label>
+                <input type="number" id="balance" name="balance" required>
+                <br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <br>
+                <button type="submit" class="button">Register</button>
+                {% if error %}
+                <p style="color: red; margin-top: 10px;">{{ error }}</p>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <div class="footer">
+        <ul>
+            <li>Email Us: bossmode2566@gmail.com</li>
+            <li>Phone Number: (Provided Upon Request)</li>
+        </ul>
+    </div>
+
+</body>
+</html>

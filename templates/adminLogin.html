@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOP - Admin Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="icon">
+            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
+        </div>
+        <div class="options">
+            <ul>
+                <a href="{{url_for('register_patient')}}"><li>Register Patient</li></a>
+                <a href="{{url_for('patient_login')}}"><li>Patient Login</li></a>
+                <a href="{{url_for('register_doctor')}}"><li>Register Doctor</li></a>
+                <a href="{{url_for('doctor_login')}}"><li>Doctor Login</li></a>
+                <a href="{{url_for('admin_login')}}"><li>Admin Login</li></a>
+            </ul>
+        </div>
+    </div>
+
+    <div class="form_container">
+        <div class="form">
+            <form method="POST">
+                <label for="admin_name">Admin Name:</label>
+                <input type="text" id="admin_name" name="admin_name" required>
+                <br>
+                <label for="admin_password">Admin Password:</label>
+                <input type="password" id="admin_password" name="admin_password" required>
+                <br>
+                <label for="hospital_code">Hospital Code:</label>
+                <input type="text" id="hospital_code" name="hospital_code" required>
+                <br>
+                <button class="button">Login</button>
+                {% if error %}
+                <p style="color: red; margin-top: 10px;">{{ error }}</p>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <div class="footer_container">
+        <div class="footer">
+            <ul>
+                <li>Email Us: bossmode2566@gmail.com</li>
+                <li>Phone Number: (Provided Upon Request)</li>
+            </ul>
+        </div>
+    </div>
+    
+</body>
+
+</html>
