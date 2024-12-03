@@ -1,6 +1,8 @@
+
+######################### MAKE SURE THAT USER IS LOGGED OUT BEFORE LOGGING IN AGAIN (FIX LATER)
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import random
 
@@ -10,10 +12,12 @@ app.secret_key = 'Anay Murarka'
 patient_accounts = []
 doctor_accounts = []
 available_times_list = []
-available_times_doctor_count = {'12-2AM':0, '2-4AM':0, '4-6AM':0, 
-'6-8AM':0, '8-10AM':0, '10AM-12PM':0, 
-'12-2PM':0, '2-4PM':0, '4-6PM':0, 
-'6-8PM':0, '8-10PM':0, '10PM-12AM':0}
+available_times_doctor_count = {'12AM-02AM':0, '02AM-04AM':0, '04AM-06AM':0, 
+'06AM-08AM':0, '08AM-10AM':0, '10AM-12PM':0, 
+'12PM-02PM':0, '02PM-04PM':0, '04PM-06PM':0, 
+'06PM-08PM':0, '08PM-10PM':0, '10PM-12AM':0}
+
+appointments = []
 
 inventory = []
 
@@ -35,13 +39,18 @@ emergency_rooms = [
     {'room':15, 'status':'Vacant', 'occupied_by':None}, 
     ]
 
+# session['user_role'] = None
+# session['user_name'] = None
+# session['logged_in'] = False
+
 
 #################################################################### HOME FUNCTIONS/PAGES:
 
 @app.route("/")
 def home():
+    # print(session['user_role'], session['user_name'], session['logged_in'])
     return render_template('home.html')
-
+    
 
 @app.route('/patient-registration', methods=['GET', 'POST'])
 def register_patient():
@@ -92,7 +101,7 @@ def register_patient():
             'balance': initial_deposit,
             'password': hashed_password,
             'assigned_doctor': "N/A",
-            'registered_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            'registered_at': datetime.now().strftime('%m/%d/%Y @%I:%M %p')
         }
        
         patient_accounts.append(patient_data)
@@ -106,6 +115,9 @@ def register_patient():
 @app.route('/patient-login', methods=['GET', 'POST'])
 def patient_login():
     if request.method == 'POST':
+        # if session.get('logged_in'):
+        #     print(session['logged_in'])
+        #     return render_template('patientLogin.html', error=f"User is already logged in. Logout to login with a different account")
 
         account_name = request.form.get('account_name', '').strip()
         password = request.form.get('password', '').strip()
@@ -175,7 +187,7 @@ def register_doctor():
             'gender': gender,
             'phone_number': phone_number,
             'password': hashed_password,
-            'registered_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            'registered_at': datetime.now().strftime('%m/%d/%Y @%I:%M %p')
         }
         doctor_accounts.append(doctor_data)
 
@@ -188,6 +200,8 @@ def register_doctor():
 @app.route('/doctor-login', methods=['GET','POST'])
 def doctor_login():
     if request.method == 'POST':
+        # if session.get('logged_in'):
+        #     return render_template('doctorLogin.html', error=f"User is already logged in. Logout to login with a different account")
 
         account_name = request.form.get('account_name', '').strip()
         password = request.form.get('password', '').strip()
@@ -214,6 +228,8 @@ def doctor_login():
 @app.route('/admin-login', methods=['GET','POST'])
 def admin_login():
     if request.method == 'POST':
+        # if session.get('logged_in'):
+        #     return render_template('adminLogin.html', error=f"User is already logged in. Logout to login as admin")
 
         admin_name = request.form.get('admin_name', '').strip()
         admin_password = request.form.get('admin_password', '').strip()
@@ -246,7 +262,8 @@ def logout():
         session['user_role'] = None
         session['user_name'] = None
         session['logged_in'] = False
-        print(session['user_role'], session['user_name'], session['logged_in'])
+        session.clear()
+        print(session.get('user_role'), session.get('user_name'), session.get('logged_in'))
         return redirect(url_for('home'))
 
 
@@ -270,7 +287,7 @@ def deposit_money():
     if request.method == 'POST':
         deposited_money = float(request.form.get('deposited_money', '0').strip())
         rounded_deposited_money = round(deposited_money, 2)
-        account_name = session['account_name']
+        account_name = session['user_name']
 
         for patient in patient_accounts:
             if account_name == patient['account_name']:
@@ -296,7 +313,7 @@ def withdraw_money():
     if request.method == 'POST':
         withdrawn_money = float(request.form.get('withdrawn_money', '0').strip())
         rounded_withdrawn_money = round(withdrawn_money, 2)
-        account_name = session['account_name']
+        account_name = session['user_name']
 
         for patient in patient_accounts:
             if account_name == patient['account_name']:
@@ -317,17 +334,47 @@ def withdraw_money():
 
 
 
-###################### SHOW A TABLE OF APPOINTMENTS, FIRST COLUMN HAS APPOINTMENT DATE (EX: 11/16/2024), SECOND HAS TIME (EX: 10:51 AM), THIRD HAS THE BUTTON TO BOOK APPOINTMENT
-@app.route('/patient/book-appointment', methods=['GET','POST'])
+@app.route('/patient/book-appointment', methods=['GET', 'POST'])
 def book_appointment():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
-    
-    return render_template('bookAppointment(8).html')
+
+    if request.method == 'POST':
+        booked_appointment = request.form.get('booked_appointment', '').strip()
+        booked = False
+        try:
+            booked_appointment = int(booked_appointment)
+        except ValueError:
+            error = f"Invalid appointment ID"
+
+        print(f"Booked appointment ID: {booked_appointment}")
+        print(f"Current User: {session.get('user_name')}")
+
+        if any(appointment['patient'] == session.get('user_name') for appointment in appointments):
+            error = "You can't book more than 1 appointment per day."
+        else:
+            for appointment in appointments:
+                if booked_appointment == appointment['appointment_id'] and appointment['patient'] == "None":
+                    appointment['patient'] = session.get('user_name')
+                    booked = True
+                    success_message = f"You have successfully booked appointment #{appointment['appointment_id']} with {appointment['doctor']} on {appointment['date']} @{appointment['time']}."
+                    break
+
+            if not booked:
+                error = f"Invalid appointment to book."
+
+        print(f"Appointments after booking attempt: {appointments}")
+
+    return render_template(
+        'bookAppointment(8).html',
+        appointments=appointments,
+        error=error if 'error' in locals() else None,
+        success_message=success_message if 'success_message' in locals() else None
+    )
     
 
 
-################################################## SHOW A TABLE OF UPCOMING APPOINTMENTS, FIRST COLUMN HAS DOCTOR THAT LOGGED-IN PATIENT WILL HAVE APPOINTMENT WITH, SECOND IS THE APPOINTMENT DATE & TIME (NO START BUTTON COLUMN BECAUSE NO LIVE APPOINTMENTS ON WEBSITE)
+################################################## SHOW A TABLE OF UPCOMING APPOINTMENTS, FIRST COLUMN HAS DOCTOR THAT LOGGED-IN PATIENT WILL HAVE APPOINTMENT WITH, SECOND IS THE APPOINTMENT DATE, THIRD IS THE TIME (AM/PM) (NO START BUTTON COLUMN BECAUSE NO LIVE APPOINTMENTS ON WEBSITE)
 @app.route('/patient/view-upcoming-appointments', methods=['GET','POST'])
 def view_upcoming_appointments_patient():
     if session.get('user_role') != 'patient':
@@ -347,7 +394,7 @@ def view_pending_payments():
 
 
 
-#################################### SHOW A TABLE OF PAYMENTS, FIRST COLUMN HAS PAYMENT TYPE, SECOND HAS AMOUNT PAID, THIRD HAS DATE PAID
+#################################### FILL OUT IDEAS FOR THIS FUNCTION LATER (BUT THIS WILL NOT BE A TABLE BECAUSE IT NEEDS TO BE MORE FORMAL FOR OFFICIAL PAYMENTS)
 @app.route('/patient/payment-history', methods=['GET','POST'])
 def view_payment_history():
     if session.get('user_role') != 'patient':
@@ -508,9 +555,19 @@ def manage_doctor_availability():
                 success_message = f"{doctor['name']} successfully assigned to {timing}."
                 print(available_times_doctor_count)
                 print(available_times_list)
+                open_appointment = {
+                'appointment_id':random.randint(100,999),
+                'doctor':doctor['name'],
+                'date':(datetime.now()+timedelta(days=1)).strftime('%m/%d/%Y'), 
+                'time':timing[0:4],
+                'patient':'None'
+                }
+                appointments.append(open_appointment)
                 break  
         if not assigned:
             error = "No available doctors to assign."
+    
+    print(appointments)
 
     return render_template(
         'manageDoctorAvailability.html',
