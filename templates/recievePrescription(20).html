@@ -23,7 +23,6 @@
                 <a href="{{url_for('view_upcoming_appointments_patient')}}">View Upcoming Appointments</a>
                 <a href="{{url_for('view_pending_payments')}}"><li>Pending Payments</li></a>
                 <a href="{{url_for('view_payment_history')}}"><li>Payment History</li></a>
-                <a href="{{url_for('recieve_test_results')}}"><li>Test Results</li></a>
                 <a href="{{url_for('recieve_prescriptions')}}"><li>Prescriptions</li></a>
                 <a href="{{url_for('process_payments')}}"><li>Process Payments</li></a>
                 <a href="{{url_for('view_patient_portal')}}"><li>Patient Portal</li></a>
@@ -34,10 +33,19 @@
 
     <div class="form_container">
         <div class="form">
-            <form>
+            <form method='POST'>
+                <label for="prescription_to_recieve">What is the name of the medicine you are receiving?</label>
+                <input type="text" id="prescription_to_recieve" name="prescription_to_recieve" required>
+                <br>
                 <button class="button">Recieve Prescription</button>
             </form>
         </div>
+        {% if error %}
+        <p style="color: red; margin-top: 10px;">{{ error }}</p>
+        {% endif %}
+        {% if success_message %}
+        <p style="color: rgb(52, 183, 23); margin-top: 10px;">{{ success_message }}</p>
+        {% endif %}
     </div>
 
     <div class="footer_container">

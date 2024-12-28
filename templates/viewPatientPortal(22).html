@@ -24,7 +24,6 @@
                 <a href="{{url_for('view_upcoming_appointments_patient')}}">View Upcoming Appointments</a>
                 <a href="{{url_for('view_pending_payments')}}"><li>Pending Payments</li></a>
                 <a href="{{url_for('view_payment_history')}}"><li>Payment History</li></a>
-                <a href="{{url_for('recieve_test_results')}}"><li>Test Results</li></a>
                 <a href="{{url_for('recieve_prescriptions')}}"><li>Prescriptions</li></a>
                 <a href="{{url_for('process_payments')}}"><li>Process Payments</li></a>
                 <a href="{{url_for('view_patient_portal')}}"><li>Patient Portal</li></a>
@@ -42,6 +41,8 @@
                     <th>Gender</th>
                     <th>Phone Number</th>
                     <th>Medical History</th>
+                    <th>Height</th>
+                    <th>Weight</th>
                     <th>Account Balance</th>
                     <th>Doctor</th>
                     <th>Registration Time</th>
@@ -55,6 +56,8 @@
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.phone_number }}</td>
                     <td>{{ patient.medical_history }}</td>
+                    <td>{{ patient.height }}</td>
+                    <td>{{ patient.weight }}</td>
                     <td>{{ patient.balance }}</td>
                     <td>{{ patient.assigned_doctor }}</td>
                     <td>{{ patient.registered_at }}</td>

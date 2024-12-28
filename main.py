@@ -1,13 +1,17 @@
 
 ######################### MAKE SURE THAT USER IS LOGGED OUT BEFORE LOGGING IN AGAIN (FIX LATER)
+
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 import time
 import random
+import string
 
 app = Flask(__name__)
 app.secret_key = 'Anay Murarka'
+
+hospital_address = "205 Hilltop Ave."
 
 patient_accounts = []
 doctor_accounts = []
@@ -18,6 +22,8 @@ available_times_doctor_count = {'12AM-02AM':0, '02AM-04AM':0, '04AM-06AM':0,
 '06PM-08PM':0, '08PM-10PM':0, '10PM-12AM':0}
 
 appointments = []
+
+prescriptions = []
 
 inventory = []
 
@@ -60,10 +66,12 @@ def register_patient():
         gender = request.form.get('gender', '').strip()
         phone_number = request.form.get('phone_number', '').strip()
         medical_history = request.form.get('medical_history', '').strip()
+        height = request.form.get('height', '').strip()
+        weight = request.form.get('weight', '').strip()
         initial_deposit = request.form.get('balance', '').strip()
         password = request.form.get('password', '').strip()
 
-        if not all([account_name, age, gender, phone_number, medical_history, initial_deposit, password]):
+        if not all([account_name, age, gender, phone_number, medical_history, height, weight, initial_deposit, password]):
             return render_template('PRegistration(2).html', error="All fields are required!")
        
         if any(patient['account_name'] == account_name for patient in patient_accounts):
@@ -83,7 +91,13 @@ def register_patient():
        
         if len(phone_number) != 10 or not phone_number.isdigit():
             return render_template('PRegistration(2).html', error="Phone number must contain exactly 10 digits.")
-       
+        
+        if not(30 <= int(height) <= 275):
+            return render_template('PRegistration(2).html', error="Invalid height.")
+        
+        if not(20 <= int(weight) <= 1000):
+            return render_template('PRegistration(2).html', error="Invalid weight.")
+
         if initial_deposit < 0:
             return render_template('PRegistration(2).html', error="Initial deposit must be 0 or greater.")
        
@@ -98,6 +112,8 @@ def register_patient():
             'gender': gender,
             'phone_number': phone_number,
             'medical_history': medical_history,
+            'height': height,
+            'weight': weight,
             'balance': initial_deposit,
             'password': hashed_password,
             'assigned_doctor': "N/A",
@@ -147,13 +163,14 @@ def register_doctor():
 
         authentication = request.form.get('authentication', '').strip()
         account_name = request.form.get('account_name', '').strip()
+        specialization = request.form.get('specialization', '').strip()
         age = request.form.get('age', '').strip()
         gender = request.form.get('gender', '').strip()
         phone_number = request.form.get('phone_number', '').strip()
         password = request.form.get('password', '').strip()
         print(f"Authentication: '{authentication}', Account Name: '{account_name}', Age: '{age}', Gender: '{gender}', Phone Number: '{phone_number}', Password: '{password}'")
 
-        if not all([authentication, account_name, age, gender, phone_number, password]):
+        if not all([authentication, account_name, specialization, age, gender, phone_number, password]):
             return render_template('DRegistration(3).html', error="All fields are required!")
 
         if not authentication.isdigit():
@@ -167,6 +184,9 @@ def register_doctor():
             return render_template('DRegistration(3).html', error="Account name already exists.")
         elif not account_name.startswith('Dr. ') or any(char.isdigit() for char in account_name):
             return render_template('DRegistration(3).html', error="Doctors' account names must start with 'Dr. ' and can't contain a digit.")
+        
+        if not specialization:
+            return render_template('DRegistration(3).html', error="Please specify your field of specialization.")
         
         if int(age) < 30 or int(age) >= 80:
             return render_template('DRegistration(3).html', error="You must be between ages 30 and 80 to work here!")
@@ -183,6 +203,7 @@ def register_doctor():
 
         doctor_data = {
             'account_name': account_name,
+            'specialization': specialization,
             'age': age,
             'gender': gender,
             'phone_number': phone_number,
@@ -371,6 +392,19 @@ def book_appointment():
         error=error if 'error' in locals() else None,
         success_message=success_message if 'success_message' in locals() else None
     )
+
+
+
+def check_appointment_timing(appointments):
+    current_time = datetime.now()
+    for appointment in appointments:
+        appointment_time = datetime.strptime(appointment['time'], '%H:%M:%S')
+
+        if appointment_time > current_time:
+            appointment['status'] = 'Complete'
+            print(appointment)
+        
+check_appointment_timing(appointments)
     
 
 
@@ -380,7 +414,10 @@ def view_upcoming_appointments_patient():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
-    return render_template('viewUpcomingAppointmentsPatient(9).html')
+    current_user = session.get('user_name')
+    user_appointments = [appointment for appointment in appointments if appointment['patient'] == current_user]
+    
+    return render_template('viewUpcomingAppointmentsPatient(9).html', appointments=user_appointments)
 
 
 
@@ -404,21 +441,18 @@ def view_payment_history():
 
 
 
-@app.route('/patient/test-results', methods=['GET','POST'])
-def recieve_test_results():
-    if session.get('user_role') != 'patient':
-        return redirect(url_for('patient_login'))
-    
-    return render_template('recieveTestResults(19).html')
-
-
-
 @app.route('/patient/prescriptions', methods=['GET','POST'])
 def recieve_prescriptions():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
-    return render_template('recievePrescription(20).html')
+    # if request.method == 'POST':
+        
+    
+    return render_template('recievePrescription(20).html',
+        # error=error if 'error' in locals() else None,
+        # success_message=success_message if 'success_message' in locals() else None
+        )
 
 
 
@@ -484,7 +518,95 @@ def view_upcoming_appointments_doctor():
     if session.get('user_role') != 'doctor':
         return redirect(url_for('doctor_login'))
     
-    return render_template('viewUpcomingAppointmentsDoctor(9).html')
+    current_user = session.get('user_name')
+    user_appointments = [appointment for appointment in appointments if appointment['doctor'] == current_user and appointment['patient'] != 'None']
+    
+    return render_template('viewUpcomingAppointmentsDoctor(9).html', appointments=user_appointments)
+
+
+
+############################################ How to format prescriptions:
+##################### TOP: hospital name, physical address
+##################### Below: doctor name, specialization (specialization will be only displayed on patient side when patient recieves and opens the prescription)
+##################### Below: patient name, age, gender, date (age and gender will only be displayed on the patient side when patient officially recieves the issued prescription)
+##################### Below: Blood pressure (ex: '120/80'mmHg), pulse rate (ex: '70'bpm)
+##################### Below: medicine to prescribe, space to write drug instructions/description
+##################### Bottom: doctor signature (do this later with instructor)
+@app.route('/doctor/issue-prescriptions', methods=['GET','POST'])
+def issue_prescriptions():
+    if session.get('user_role') != 'doctor':
+        return redirect(url_for('doctor_login'))
+    
+    if request.method == 'POST':
+        valid_prescription = True
+
+        recieving_patient = request.form.get('recieving_patient', '').strip()
+        patient_blood_pressure_1 = request.form.get('patient_blood_pressure_1', '').strip()
+        patient_blood_pressure_2 = request.form.get('patient_blood_pressure_2', '').strip()
+        patient_pulse_rate = request.form.get('patient_pulse_rate', '').strip()
+        drug_to_prescribe = request.form.get('drug_to_prescribe', '').strip()
+        drug_usage_description = request.form.get('drug_usage_description', '').strip()
+
+        if any(recieving_patient.capitalize() == prescription['recieving_patient'] for prescription in prescriptions if prescriptions != []):
+            error = f"Only 1 prescription can be prescribed to each patient at a time."
+            valid_prescription = False
+
+        if not any(recieving_patient.capitalize() == patient['account_name'].capitalize() for patient in patient_accounts):
+            error = f"'{recieving_patient}' is not registered in this hospital."
+            valid_prescription = False
+
+        if int(patient_blood_pressure_1) < 80 or int(patient_blood_pressure_2) < 50 or int(patient_blood_pressure_1) > 200 or int(patient_blood_pressure_2) > 140:
+            error = f"Invalid blood pressure range."
+            valid_prescription = False
+    
+        if int(patient_pulse_rate) < 40 or int(patient_pulse_rate) > 150:
+            error = f"Invalid pulse rate range."
+            valid_prescription = False
+        
+        if not any(drug_to_prescribe.capitalize() == medicine['med_name'] for medicine in inventory):
+            error = f"{drug_to_prescribe.capitalize()} not found in medicine inventory."
+            valid_prescription = False
+
+        for medicine in inventory:
+            if drug_to_prescribe.capitalize() == medicine['med_name'] and medicine['med_status'] == "Expired" or drug_to_prescribe.capitalize() == medicine['med_name'] and int(medicine['med_quantity']) < 1:
+                error = f"{drug_to_prescribe.capitalize()} is either expired or out of stock."
+                valid_prescription = False
+        
+        if valid_prescription:
+            patient_blood_pressure = f"{patient_blood_pressure_1}/{patient_blood_pressure_2}"
+
+            random_number = random.randint(100,999)
+            random_letter = random.choice(string.ascii_letters)
+            prescription_id = f"{random_number}{random_letter}"
+
+            prescription_data = {
+                'prescription_id': prescription_id,
+                'issued_by_doctor': session.get('user_name'),
+                'recieving_patient': recieving_patient.capitalize(),
+                'prescription_issued_date': datetime.now().strftime('%m/%d/%Y'),
+                'patient_blood_pressure': patient_blood_pressure,
+                'patient_pulse_rate': patient_pulse_rate,
+                'drug_to_prescribe': drug_to_prescribe,
+                'drug_usage_description': drug_usage_description,
+            }
+            prescriptions.append(prescription_data)
+            print(prescriptions)
+
+            for medicine in inventory:
+                if drug_to_prescribe.capitalize() == medicine['med_name']:
+                    medicine['med_quantity'] = int(medicine['med_quantity'])
+                    medicine['med_quantity'] -= 1
+            print(inventory)
+
+            success_message = f"Prescription {prescription_id} has been successfully created and issued to {recieving_patient.capitalize()}."
+
+
+    return render_template('issuePrescriptions.html',
+        error=error if 'error' in locals() else None,
+        success_message=success_message if 'success_message' in locals() else None,
+        hospital_address=hospital_address,
+        today_date=datetime.now().strftime('%m/%d/%Y')
+    )
 
 
 
@@ -560,7 +682,8 @@ def manage_doctor_availability():
                 'doctor':doctor['name'],
                 'date':(datetime.now()+timedelta(days=1)).strftime('%m/%d/%Y'), 
                 'time':timing[0:4],
-                'patient':'None'
+                'patient':'None',
+                'status':'Incomplete'
                 }
                 appointments.append(open_appointment)
                 break  

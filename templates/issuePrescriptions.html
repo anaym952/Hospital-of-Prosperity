@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOP - Issue a Prescription</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="icon">
+            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
+        </div>
+        <div class="options">
+            <ul>
+                <a href="{{url_for('send_availability')}}"><li>Manage Availability</li></a>
+                <a href="{{url_for('view_upcoming_appointments_doctor')}}"><li>View Upcoming Appointments</li></a>
+                <a href="{{url_for('issue_prescriptions')}}"><li>Issue Prescriptions</li></a>
+                <a href="{{url_for('add_patient_records')}}"><li>Add Patients' Records</li></a>
+                <a href="{{url_for('view_patient_records')}}"><li>View Patients' Records</li></a>
+                <a href="{{url_for('logout')}}"><li>Logout</li></a>
+            </ul>
+        </div>
+    </div>
+
+
+    <div style="display: flex; margin-top: 20px; justify-content: center; gap: 200px; align-items: center; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+        <div>
+            <h2 style="color: red; text-decoration: underline;">Hospital of Prosperity</h2>
+        </div>
+        <div>
+            <h4>{{ hospital_address }}</h4>
+        </div>
+    </div>
+
+    <div class="form_container">
+        <div class="form">
+            <form method='POST' style="margin-top: -100px; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+
+                <div style="display: flex; gap: 50px; justify-content: center; margin-top: 40px;">
+                    <div>
+                        <label for="patient_to_issue">Patient's Name:</label>
+                        <input type="text" id="recieving_patient" name="recieving_patient" required>
+                    </div>
+                    <div>
+                        <label>Date: {{ today_date }}</label>
+                    </div>
+                </div>
+
+                <br>
+
+                <div style="display: flex; gap: 50px; margin-top: -20px;  justify-content: center;">
+                    <div>
+                        <label for="patient_bp">Patient's Blood Pressure:</label>
+                        <input style="width: 50px;" type="number" id="patient_blood_pressure_1" name="patient_blood_pressure_1" required>
+                        <label>/</label>
+                        <input style="width: 50px;" type="number" id="patient_blood_pressure_2" name="patient_blood_pressure_2" required>
+                        <label>mmHg</label>
+                    </div>
+                    <div>
+                        <label for="patient_pr">Patient's Pulse Rate:</label>
+                        <input style="width: 100px;" type="number" id="patient_pulse_rate" name="patient_pulse_rate" required>
+                        <label>bpm</label>
+                    </div>
+                </div>
+
+                <br>
+
+                <div style="display: flex; gap: 40px; margin-top: -20px;  justify-content: center;">
+                    <div>
+                        <label for="med_to_prescribe">Drug to Prescribe:</label>
+                        <input style="width: 200px;" type="text" id="drug_to_prescribe" name="drug_to_prescribe" required>
+                    </div>
+                    <div>
+                        <label for="usage_description">Short Description for Drug Usage:</label>
+                        <input style="width: 300px;" type="text" id="drug_usage_description" name="drug_usage_description" required>
+                    </div>
+                </div>
+
+                <br>
+
+                <button type="submit" class="button">Create Prescription</button>
+
+                {% if error %}
+                <p style="color: red; margin-top: 10px;">{{ error }}</p>
+                {% endif %}
+                {% if success_message %}
+                <p style="color: rgb(52, 183, 23); margin-top: 10px;">{{ success_message }}</p>
+                {% endif %}
+
+            </form>
+        </div>
+    </div>
+
+
+    <div class="footer">
+        <ul>
+            <li>Email Us: bossmode2566@gmail.com</li>
+            <li>Phone Number: (Provided Upon Request)</li>
+        </ul>
+    </div>
+
+</body>
+</html>

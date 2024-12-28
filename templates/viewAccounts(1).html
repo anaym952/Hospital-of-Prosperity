@@ -95,6 +95,7 @@
             <thead class="table-dark">
                 <tr>
                     <th>Doctor Name</th>
+                    <th>Specialization</th>
                     <th>Age</th>
                     <th>Gender</th>
                     <th>Phone Number</th>
@@ -105,8 +106,9 @@
                 {% for doctor in doctors: %}
                 <tr>
                     <td>{{ doctor.account_name }}</td>
+                    <td>{{ doctor.specialization }}</td>
                     <td>{{ doctor.age }}</td>
-                    <td>{{ doctor.gender}}</td>
+                    <td>{{ doctor.gender }}</td>
                     <td>{{ doctor.phone_number }}</td>
                     <td>{{ doctor.registered_at }}</td>
                 </tr>
