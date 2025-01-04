@@ -1,4 +1,14 @@
 
+############################################ How to format prescriptions:
+##################### TOP: hospital name, physical address
+##################### Below: doctor name, specialization (specialization will be only displayed on patient side when patient recieves and opens the prescription)
+##################### Below: patient name, age, gender, date (age and gender will only be displayed on the patient side when patient officially recieves the issued prescription)
+##################### Below: Blood pressure (ex: '120/80'mmHg), pulse rate (ex: '70'bpm)
+##################### Below: medicine to prescribe, space to write drug instructions/description
+##################### Bottom: doctor signature (do this later with instructor)
+
+################# CONTINUE TO WORK ON THE PATIENT SIDE OF RECIEVING PRESCRIPTIONS AND FINISH SOON!
+############### ADD DOCTOR SIGNATURE TO ISSUE_PRESCRIPTIONS() LATER (WITH INSTRUCTOR'S HELP)
 ######################### MAKE SURE THAT USER IS LOGGED OUT BEFORE LOGGING IN AGAIN (FIX LATER)
 
 from flask import Flask, render_template, request, redirect, url_for, session
@@ -10,6 +20,7 @@ import string
 
 app = Flask(__name__)
 app.secret_key = 'Anay Murarka'
+app.config['DEBUG']=True
 
 hospital_address = "205 Hilltop Ave."
 
@@ -22,11 +33,8 @@ available_times_doctor_count = {'12AM-02AM':0, '02AM-04AM':0, '04AM-06AM':0,
 '06PM-08PM':0, '08PM-10PM':0, '10PM-12AM':0}
 
 appointments = []
-
 prescriptions = []
-
 inventory = []
-
 emergency_rooms = [
     {'room':1, 'status':'Vacant', 'occupied_by':None}, 
     {'room':2, 'status':'Vacant', 'occupied_by':None}, 
@@ -446,12 +454,27 @@ def recieve_prescriptions():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
-    # if request.method == 'POST':
-        
+    if request.method == 'POST':
+        prescription_ready = False
+        prescription_to_recieve_id = request.form.get('prescription_to_recieve_id', '').strip()
+        time.sleep(1.5)
+
+        for prescription in prescriptions:
+            if prescription['prescription_id'] == prescription_to_recieve_id and prescription['recieving_patient'] == session.get('user_name'):
+                prescription_ready = True
+                print(prescription)
+        if not prescription_ready:
+            error = f"Incorrect prescription ID or wrong patient."
     
     return render_template('recievePrescription(20).html',
-        # error=error if 'error' in locals() else None,
-        # success_message=success_message if 'success_message' in locals() else None
+        error=error if 'error' in locals() else None,
+        prescription_ready=prescription_ready if 'prescription_ready' in locals() else None,
+        hospital_address=hospital_address,
+        prescriptions=prescriptions,
+        prescription_to_recieve_id=prescription_to_recieve_id if 'prescription_to_recieve_id' in locals() else None,
+        patient_logged_in = session.get('user_name').capitalize(),
+        doctor_accounts=doctor_accounts,
+        patient_accounts=patient_accounts
         )
 
 
@@ -525,13 +548,6 @@ def view_upcoming_appointments_doctor():
 
 
 
-############################################ How to format prescriptions:
-##################### TOP: hospital name, physical address
-##################### Below: doctor name, specialization (specialization will be only displayed on patient side when patient recieves and opens the prescription)
-##################### Below: patient name, age, gender, date (age and gender will only be displayed on the patient side when patient officially recieves the issued prescription)
-##################### Below: Blood pressure (ex: '120/80'mmHg), pulse rate (ex: '70'bpm)
-##################### Below: medicine to prescribe, space to write drug instructions/description
-##################### Bottom: doctor signature (do this later with instructor)
 @app.route('/doctor/issue-prescriptions', methods=['GET','POST'])
 def issue_prescriptions():
     if session.get('user_role') != 'doctor':
@@ -882,7 +898,8 @@ def manage_emergency_rooms():
                            error=error,
                            success_message=success_message,
                            is_patient_valid=is_patient_valid,
-                           patient_to_assign=patient_to_assign)
+                           patient_to_assign=patient_to_assign,
+                           )
 
 
 

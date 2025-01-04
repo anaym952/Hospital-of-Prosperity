@@ -11,6 +11,7 @@
 
 <body>
 
+
     <div class="navbar">
         <div class="icon">
             <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
@@ -31,11 +32,12 @@
         </div>
     </div>
 
+
     <div class="form_container">
         <div class="form">
             <form method='POST'>
-                <label for="prescription_to_recieve">What is the name of the medicine you are receiving?</label>
-                <input type="text" id="prescription_to_recieve" name="prescription_to_recieve" required>
+                <label for="prescription_id">Prescription ID:</label>
+                <input type="text" id="prescription_to_recieve_id" name="prescription_to_recieve_id" required>
                 <br>
                 <button class="button">Recieve Prescription</button>
             </form>
@@ -48,6 +50,47 @@
         {% endif %}
     </div>
 
+
+    {% if prescription_ready %}
+        <div style="display: flex; margin-top: 20px; justify-content: center; gap: 200px; align-items: center; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+            <div>
+                <h2 style="color: red; text-decoration: underline;">Hospital of Prosperity</h2>
+            </div>
+            <div>
+                <h4>{{ hospital_address }}</h4>
+            </div>
+        </div>
+
+        {% for prescription in prescriptions %}
+            {% if prescription['prescription_id'] == prescription_to_recieve_id and prescription['recieving_patient'] == patient_logged_in: %}
+                
+                Doctor: {{ prescription['issued_by_doctor'] }}
+                {% for doctor in doctor_accounts %}
+                {% if doctor['account_name'] == prescription['issued_by_doctor'] %}
+                Specialization: {{ doctor['specialization'].capitalize() }}
+                {% endif %}
+                {% endfor %}
+                <br>
+                Patient: {{ prescription['recieving_patient'] }}
+                {% for patient in patient_accounts %}
+                {% if patient['account_name'] == prescription['recieving_patient'] %}
+                Age: {{ patient['age'] }}
+                Gender: {{ patient['gender'].capitalize() }}
+                {% endif %}
+                {% endfor %}
+                Issued: {{ prescription['prescription_issued_date'] }}
+                <br>
+                Patient Blood Pressure: {{ prescription['patient_blood_pressure'] }}mmHg
+                Patient Pulse Rate: {{ prescription['patient_pulse_rate'] }}bpm
+                <br>
+                Medicine: {{ prescription['drug_to_prescribe'] }}
+                Instructions: {{ prescription['drug_usage_description'] }}
+
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+
     <div class="footer_container">
         <div class="footer">
             <ul>
@@ -57,6 +100,7 @@
         </div>
     </div>
     
+
 </body>
 
 </html>
