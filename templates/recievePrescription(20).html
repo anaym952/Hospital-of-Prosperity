@@ -64,27 +64,55 @@
         {% for prescription in prescriptions %}
             {% if prescription['prescription_id'] == prescription_to_recieve_id and prescription['recieving_patient'] == patient_logged_in: %}
                 
-                Doctor: {{ prescription['issued_by_doctor'] }}
-                {% for doctor in doctor_accounts %}
-                {% if doctor['account_name'] == prescription['issued_by_doctor'] %}
-                Specialization: {{ doctor['specialization'].capitalize() }}
-                {% endif %}
-                {% endfor %}
-                <br>
-                Patient: {{ prescription['recieving_patient'] }}
-                {% for patient in patient_accounts %}
-                {% if patient['account_name'] == prescription['recieving_patient'] %}
-                Age: {{ patient['age'] }}
-                Gender: {{ patient['gender'].capitalize() }}
-                {% endif %}
-                {% endfor %}
-                Issued: {{ prescription['prescription_issued_date'] }}
-                <br>
-                Patient Blood Pressure: {{ prescription['patient_blood_pressure'] }}mmHg
-                Patient Pulse Rate: {{ prescription['patient_pulse_rate'] }}bpm
-                <br>
-                Medicine: {{ prescription['drug_to_prescribe'] }}
-                Instructions: {{ prescription['drug_usage_description'] }}
+                <div style="margin-top: 40px; align-items: center; justify-content: center; display: flex; flex-direction: column; gap: 20px;">
+                    
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        Issued By: {{ prescription['issued_by_doctor'] }}
+                        {% for doctor in doctor_accounts %}
+                        {% if doctor['account_name'] == prescription['issued_by_doctor'] %}
+                        (specializes in {{ doctor['specialization'].capitalize() }})
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+                        <div>
+                            Patient: {{ prescription['recieving_patient'] }}
+                        </div>
+                        {% for patient in patient_accounts %}
+                        {% if patient['account_name'] == prescription['recieving_patient'] %}
+                        <div>
+                            Age: {{ patient['age'] }}
+                        </div>
+                        <div>
+                            Gender: {{ patient['gender'].capitalize() }}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        <div>
+                            Issued: {{ prescription['prescription_issued_date'] }}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+                        <div>
+                            Patient's Blood Pressure: {{ prescription['patient_blood_pressure'] }}mmHg
+                        </div>
+                        <div>
+                            Pulse Rate: {{ prescription['patient_pulse_rate'] }}bpm
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+                        <div>
+                            Medicine: {{ prescription['drug_to_prescribe'] }}
+                        </div>
+                        <div>
+                            Instructions: {{ prescription['drug_usage_description'] }}
+                        </div>
+                    </div>
+
+                </div>
 
             {% endif %}
         {% endfor %}

@@ -1,3 +1,6 @@
+########### ALWAYS MAKE CHANGES WHEN YOU ARE IN THE "BACKUP" BRANCH,
+########### COMMIT THOSE CHANGES TO BACKUP WHEN IN THAT BRANCH,
+########### THEN MAKE MAIN BRANCH UP TO DATE BY SWITCHING TO MAIN BRANCH AND MERGING IT WITH BACKUP
 
 ############################################ How to format prescriptions:
 ##################### TOP: hospital name, physical address
@@ -34,6 +37,7 @@ available_times_doctor_count = {'12AM-02AM':0, '02AM-04AM':0, '04AM-06AM':0,
 
 appointments = []
 prescriptions = []
+pending_payments = []
 inventory = []
 emergency_rooms = [
     {'room':1, 'status':'Vacant', 'occupied_by':None}, 
@@ -408,8 +412,18 @@ def check_appointment_timing(appointments):
     for appointment in appointments:
         appointment_time = datetime.strptime(appointment['time'], '%H:%M:%S')
 
-        if appointment_time > current_time:
+        if appointment_time < current_time:
             appointment['status'] = 'Complete'
+            rand_number = random.randint(100,999)
+            rand_letter = random.choice(string.ascii_letters)
+            payment_id = f"{rand_number}{rand_letter}"
+            pending_payment_data = {
+                'payment_type': 'appointment',
+                'payment_id': payment_id,
+                'patient_to_pay': appointment['patient'],
+                'amount_due': '50'
+                }
+            pending_payments.append(pending_payment_data)
             print(appointment)
         
 check_appointment_timing(appointments)
@@ -422,8 +436,9 @@ def view_upcoming_appointments_patient():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
+    check_appointment_timing(appointments)
     current_user = session.get('user_name')
-    user_appointments = [appointment for appointment in appointments if appointment['patient'] == current_user]
+    user_appointments = [appointment for appointment in appointments if appointment['patient'] == current_user and appointment['status'] == "Incomplete"]
     
     return render_template('viewUpcomingAppointmentsPatient(9).html', appointments=user_appointments)
 
@@ -462,7 +477,22 @@ def recieve_prescriptions():
         for prescription in prescriptions:
             if prescription['prescription_id'] == prescription_to_recieve_id and prescription['recieving_patient'] == session.get('user_name'):
                 prescription_ready = True
+
+                if prescription['prescription_status'] == 'Not recieved':
+                    rand_number = random.randint(100,999)
+                    rand_letter = random.choice(string.ascii_letters)
+                    payment_id = f"{rand_number}{rand_letter}"
+                    pending_payment_data = {
+                        'payment_type': 'prescription',
+                        'payment_id': payment_id,
+                        'patient_to_pay': session.get('user_name'),
+                        'amount_due': '100'
+                    }
+                    pending_payments.append(pending_payment_data)
+                    prescription['prescription_status'] = 'Recieved'
+                print(pending_payments)
                 print(prescription)
+
         if not prescription_ready:
             error = f"Incorrect prescription ID or wrong patient."
     
@@ -542,7 +572,7 @@ def view_upcoming_appointments_doctor():
         return redirect(url_for('doctor_login'))
     
     current_user = session.get('user_name')
-    user_appointments = [appointment for appointment in appointments if appointment['doctor'] == current_user and appointment['patient'] != 'None']
+    user_appointments = [appointment for appointment in appointments if appointment['doctor'] == current_user and appointment['patient'] != 'None' and appointment['status'] == "Incomplete"]
     
     return render_template('viewUpcomingAppointmentsDoctor(9).html', appointments=user_appointments)
 
@@ -591,7 +621,7 @@ def issue_prescriptions():
         if valid_prescription:
             patient_blood_pressure = f"{patient_blood_pressure_1}/{patient_blood_pressure_2}"
 
-            random_number = random.randint(100,999)
+            random_number = random.randint(10,99)
             random_letter = random.choice(string.ascii_letters)
             prescription_id = f"{random_number}{random_letter}"
 
@@ -604,6 +634,7 @@ def issue_prescriptions():
                 'patient_pulse_rate': patient_pulse_rate,
                 'drug_to_prescribe': drug_to_prescribe,
                 'drug_usage_description': drug_usage_description,
+                'prescription_status': 'Not recieved'
             }
             prescriptions.append(prescription_data)
             print(prescriptions)
