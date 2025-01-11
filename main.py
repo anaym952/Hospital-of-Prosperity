@@ -38,6 +38,7 @@ available_times_doctor_count = {'12AM-02AM':0, '02AM-04AM':0, '04AM-06AM':0,
 appointments = []
 prescriptions = []
 pending_payments = []
+payment_history = []
 inventory = []
 emergency_rooms = [
     {'room':1, 'status':'Vacant', 'occupied_by':None}, 
@@ -367,70 +368,121 @@ def withdraw_money():
 
 
 
+
 @app.route('/patient/book-appointment', methods=['GET', 'POST'])
 def book_appointment():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
 
     if request.method == 'POST':
-        booked_appointment = request.form.get('booked_appointment', '').strip()
-        booked = False
         try:
-            booked_appointment = int(booked_appointment)
+            booked_appointment = int(request.form.get('booked_appointment', '').strip())
         except ValueError:
-            error = f"Invalid appointment ID"
+            error = "Invalid appointment ID. Please try again."
+            return redirect(url_for('book_appointment'))
 
-        print(f"Booked appointment ID: {booked_appointment}")
-        print(f"Current User: {session.get('user_name')}")
-
-        if any(appointment['patient'] == session.get('user_name') for appointment in appointments):
+        current_user = session.get('user_name')
+        if any(app['patient'] == current_user for app in appointments):
             error = "You can't book more than 1 appointment per day."
         else:
-            for appointment in appointments:
-                if booked_appointment == appointment['appointment_id'] and appointment['patient'] == "None":
-                    appointment['patient'] = session.get('user_name')
-                    booked = True
-                    success_message = f"You have successfully booked appointment #{appointment['appointment_id']} with {appointment['doctor']} on {appointment['date']} @{appointment['time']}."
+            for app in appointments:
+                if app['appointment_id'] == booked_appointment and app['patient'] == "None":
+                    app['patient'] = current_user
+                    success_message = f"Successfully booked appointment #{app['appointment_id']} with {app['doctor']} on {app['date']} @{app['time']}."
                     break
+            else:
+                error = "Invalid appointment to book."
 
-            if not booked:
-                error = f"Invalid appointment to book."
-
-        print(f"Appointments after booking attempt: {appointments}")
-
-    return render_template(
-        'bookAppointment(8).html',
-        appointments=appointments,
+    return render_template('bookAppointment(8).html',
         error=error if 'error' in locals() else None,
-        success_message=success_message if 'success_message' in locals() else None
-    )
+        success_message=success_message if 'success_message' in locals() else None, 
+        appointments=appointments
+        )
+
+# @app.route('/patient/book-appointment', methods=['GET', 'POST'])
+# def book_appointment():
+#     if session.get('user_role') != 'patient':
+#         return redirect(url_for('patient_login'))
+
+#     if request.method == 'POST':
+#         booked_appointment = request.form.get('booked_appointment', '').strip()
+#         booked = False
+#         try:
+#             booked_appointment = int(booked_appointment)
+#         except ValueError:
+#             error = f"Invalid appointment ID"
+
+#         print(f"Booked appointment ID: {booked_appointment}")
+#         print(f"Current User: {session.get('user_name')}")
+
+#         if any(appointment['patient'] == session.get('user_name') for appointment in appointments):
+#             error = "You can't book more than 1 appointment per day."
+#         else:
+#             for appointment in appointments:
+#                 if booked_appointment == appointment['appointment_id'] and appointment['patient'] == "None":
+#                     appointment['patient'] = session.get('user_name')
+#                     booked = True
+#                     success_message = f"You have successfully booked appointment #{appointment['appointment_id']} with {appointment['doctor']} on {appointment['date']} @{appointment['time']}."
+#                     break
+
+#             if not booked:
+#                 error = f"Invalid appointment to book."
+
+#         print(f"Appointments after booking attempt: {appointments}")
+
+#     return render_template(
+#         'bookAppointment(8).html',
+#         appointments=appointments,
+#         error=error if 'error' in locals() else None,
+#         success_message=success_message if 'success_message' in locals() else None
+#     )
+
 
 
 
 def check_appointment_timing(appointments):
     current_time = datetime.now()
     for appointment in appointments:
-        appointment_time = datetime.strptime(appointment['time'], '%H:%M:%S')
-
-        if appointment_time < current_time:
+        appointment_time = datetime.strptime(appointment['time'], '%H:%M')
+        if appointment['status'] == 'Incomplete' and appointment_time < current_time:
             appointment['status'] = 'Complete'
-            rand_number = random.randint(100,999)
-            rand_letter = random.choice(string.ascii_letters)
-            payment_id = f"{rand_number}{rand_letter}"
-            pending_payment_data = {
-                'payment_type': 'appointment',
-                'payment_id': payment_id,
-                'patient_to_pay': appointment['patient'],
-                'amount_due': '50'
-                }
-            pending_payments.append(pending_payment_data)
-            print(appointment)
+            generate_pending_payment(appointment)
+
+def generate_pending_payment(appointment):
+    rand_number = random.randint(100, 999)
+    rand_letter = random.choice(string.ascii_letters)
+    payment_id = f"{rand_number}{rand_letter}"
+    pending_payment_data = {
+        'payment_type': 'appointment',
+        'payment_id': payment_id,
+        'patient_to_pay': appointment['patient'],
+        'amount_due': 50,
+    }
+    pending_payments.append(pending_payment_data)
+
+# def check_appointment_timing(appointments):
+#     current_time = datetime.now()
+#     for appointment in appointments:
+#         appointment_time = datetime.strptime(appointment['time'], '%H:%M:%S')
+
+#         if appointment_time < current_time:
+#             appointment['status'] = 'Complete'
+#             rand_number = random.randint(100,999)
+#             rand_letter = random.choice(string.ascii_letters)
+#             payment_id = f"{rand_number}{rand_letter}"
+#             pending_payment_data = {
+#                 'payment_type': 'appointment',
+#                 'payment_id': payment_id,
+#                 'patient_to_pay': appointment['patient'],
+#                 'amount_due': 50
+#                 }
+#             pending_payments.append(pending_payment_data)
+#             print(appointment)
         
-check_appointment_timing(appointments)
+# check_appointment_timing(appointments)
     
 
 
-################################################## SHOW A TABLE OF UPCOMING APPOINTMENTS, FIRST COLUMN HAS DOCTOR THAT LOGGED-IN PATIENT WILL HAVE APPOINTMENT WITH, SECOND IS THE APPOINTMENT DATE, THIRD IS THE TIME (AM/PM) (NO START BUTTON COLUMN BECAUSE NO LIVE APPOINTMENTS ON WEBSITE)
 @app.route('/patient/view-upcoming-appointments', methods=['GET','POST'])
 def view_upcoming_appointments_patient():
     if session.get('user_role') != 'patient':
@@ -486,7 +538,7 @@ def recieve_prescriptions():
                         'payment_type': 'prescription',
                         'payment_id': payment_id,
                         'patient_to_pay': session.get('user_name'),
-                        'amount_due': '100'
+                        'amount_due': 100
                     }
                     pending_payments.append(pending_payment_data)
                     prescription['prescription_status'] = 'Recieved'
@@ -565,7 +617,6 @@ def send_availability():
 
 
 
-################################################## SHOW A TABLE OF UPCOMING APPOINTMENTS, FIRST COLUMN HAS PATIENT THAT LOGGED-IN DOCTOR IS HAVING APPOINTMENT WITH, SECOND IS THE APPOINTMENT DATE & TIME (NO START BUTTON COLUMN BECAUSE NO LIVE APPOINTMENTS ON WEBSITE)
 @app.route('/doctor/view-upcoming-appointments', methods=['GET','POST'])
 def view_upcoming_appointments_doctor():
     if session.get('user_role') != 'doctor':
@@ -706,7 +757,28 @@ def view_all_accounts():
     return render_template('viewAccounts(1).html')
 
 
-
+#################################
+##################################
+#################################
+###############################
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+#################################
+################################# *IMPORTANT******* PLEASE REMOVE THE TIMEDELTA DAYS=1 AND CHANGE THE TIME TO
+################################# AROUND YOUR OWN TIME WHEN TESTING SO THAT YOU WON'T HAVE TO WAIT FOR ONE OF THE
+################################# DEFAULT APPOINTMENT TIMINGS (TESTING WILL BECOME **MUCH** SHORTER IF YOU DO THIS)
 @app.route('/admin/manage-doctor-availability', methods=['GET', 'POST'])
 def manage_doctor_availability():
     if session.get('user_role') != 'admin':
