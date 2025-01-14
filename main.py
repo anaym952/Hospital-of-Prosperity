@@ -132,6 +132,7 @@ def register_patient():
             'assigned_doctor': "N/A",
             'registered_at': datetime.now().strftime('%m/%d/%Y @%I:%M %p')
         }
+        print(patient_data)
        
         patient_accounts.append(patient_data)
        
@@ -369,117 +370,123 @@ def withdraw_money():
 
 
 
-@app.route('/patient/book-appointment', methods=['GET', 'POST'])
-def book_appointment():
-    if session.get('user_role') != 'patient':
-        return redirect(url_for('patient_login'))
-
-    if request.method == 'POST':
-        try:
-            booked_appointment = int(request.form.get('booked_appointment', '').strip())
-        except ValueError:
-            error = "Invalid appointment ID. Please try again."
-            return redirect(url_for('book_appointment'))
-
-        current_user = session.get('user_name')
-        if any(app['patient'] == current_user for app in appointments):
-            error = "You can't book more than 1 appointment per day."
-        else:
-            for app in appointments:
-                if app['appointment_id'] == booked_appointment and app['patient'] == "None":
-                    app['patient'] = current_user
-                    success_message = f"Successfully booked appointment #{app['appointment_id']} with {app['doctor']} on {app['date']} @{app['time']}."
-                    break
-            else:
-                error = "Invalid appointment to book."
-
-    return render_template('bookAppointment(8).html',
-        error=error if 'error' in locals() else None,
-        success_message=success_message if 'success_message' in locals() else None, 
-        appointments=appointments
-        )
-
 # @app.route('/patient/book-appointment', methods=['GET', 'POST'])
 # def book_appointment():
 #     if session.get('user_role') != 'patient':
 #         return redirect(url_for('patient_login'))
 
 #     if request.method == 'POST':
-#         booked_appointment = request.form.get('booked_appointment', '').strip()
-#         booked = False
 #         try:
-#             booked_appointment = int(booked_appointment)
+#             booked_appointment = int(request.form.get('booked_appointment', '').strip())
 #         except ValueError:
-#             error = f"Invalid appointment ID"
+#             error = "Invalid appointment ID. Please try again."
+#             return redirect(url_for('book_appointment'))
 
-#         print(f"Booked appointment ID: {booked_appointment}")
-#         print(f"Current User: {session.get('user_name')}")
-
-#         if any(appointment['patient'] == session.get('user_name') for appointment in appointments):
+#         current_user = session.get('user_name')
+#         if any(app['patient'] == current_user for app in appointments):
 #             error = "You can't book more than 1 appointment per day."
 #         else:
-#             for appointment in appointments:
-#                 if booked_appointment == appointment['appointment_id'] and appointment['patient'] == "None":
-#                     appointment['patient'] = session.get('user_name')
-#                     booked = True
-#                     success_message = f"You have successfully booked appointment #{appointment['appointment_id']} with {appointment['doctor']} on {appointment['date']} @{appointment['time']}."
+#             for app in appointments:
+#                 if app['appointment_id'] == booked_appointment and app['patient'] == "None":
+#                     app['patient'] = current_user
+#                     success_message = f"Successfully booked appointment #{app['appointment_id']} with {app['doctor']} on {app['date']} @{app['time']}."
 #                     break
+#             else:
+#                 error = "Invalid appointment to book."
 
-#             if not booked:
-#                 error = f"Invalid appointment to book."
-
-#         print(f"Appointments after booking attempt: {appointments}")
-
-#     return render_template(
-#         'bookAppointment(8).html',
-#         appointments=appointments,
+#     return render_template('bookAppointment(8).html',
 #         error=error if 'error' in locals() else None,
-#         success_message=success_message if 'success_message' in locals() else None
-#     )
+#         success_message=success_message if 'success_message' in locals() else None, 
+#         appointments=appointments
+#         )
 
 
 
+###################### MY VERSION OF BOOK APPOINTMENTS:
+@app.route('/patient/book-appointment', methods=['GET', 'POST'])
+def book_appointment():
+    if session.get('user_role') != 'patient':
+        return redirect(url_for('patient_login'))
 
-def check_appointment_timing(appointments):
-    current_time = datetime.now()
-    for appointment in appointments:
-        appointment_time = datetime.strptime(appointment['time'], '%H:%M')
-        if appointment['status'] == 'Incomplete' and appointment_time < current_time:
-            appointment['status'] = 'Complete'
-            generate_pending_payment(appointment)
+    if request.method == 'POST':
+        booked_appointment = request.form.get('booked_appointment', '').strip()
+        booked = False
+        try:
+            booked_appointment = int(booked_appointment)
+        except ValueError:
+            error = f"Invalid appointment ID"
 
-def generate_pending_payment(appointment):
-    rand_number = random.randint(100, 999)
-    rand_letter = random.choice(string.ascii_letters)
-    payment_id = f"{rand_number}{rand_letter}"
-    pending_payment_data = {
-        'payment_type': 'appointment',
-        'payment_id': payment_id,
-        'patient_to_pay': appointment['patient'],
-        'amount_due': 50,
-    }
-    pending_payments.append(pending_payment_data)
+        print(f"Booked appointment ID: {booked_appointment}")
+        print(f"Current User: {session.get('user_name')}")
+
+        if any(appointment['patient'] == session.get('user_name') for appointment in appointments):
+            error = "You can't book more than 1 appointment per day."
+        else:
+            for appointment in appointments:
+                if booked_appointment == appointment['appointment_id'] and appointment['patient'] == "None":
+                    appointment['patient'] = session.get('user_name')
+                    booked = True
+                    success_message = f"You have successfully booked appointment #{appointment['appointment_id']} with {appointment['doctor']} on {appointment['date']} @{appointment['time']}."
+                    break
+
+            if not booked:
+                error = f"Invalid appointment to book."
+
+        print(f"Appointments after booking attempt: {appointments}")
+
+    return render_template(
+        'bookAppointment(8).html',
+        appointments=appointments,
+        error=error if 'error' in locals() else None,
+        success_message=success_message if 'success_message' in locals() else None
+    )
+
+
+
 
 # def check_appointment_timing(appointments):
 #     current_time = datetime.now()
 #     for appointment in appointments:
 #         appointment_time = datetime.strptime(appointment['time'], '%H:%M:%S')
-
-#         if appointment_time < current_time:
+#         if appointment['status'] == 'Incomplete' and appointment_time < current_time:
 #             appointment['status'] = 'Complete'
-#             rand_number = random.randint(100,999)
-#             rand_letter = random.choice(string.ascii_letters)
-#             payment_id = f"{rand_number}{rand_letter}"
-#             pending_payment_data = {
-#                 'payment_type': 'appointment',
-#                 'payment_id': payment_id,
-#                 'patient_to_pay': appointment['patient'],
-#                 'amount_due': 50
-#                 }
-#             pending_payments.append(pending_payment_data)
-#             print(appointment)
+#             generate_pending_payment(appointment)
+
+# def generate_pending_payment(appointment):
+#     rand_number = random.randint(100, 999)
+#     rand_letter = random.choice(string.ascii_letters)
+#     payment_id = f"{rand_number}{rand_letter}"
+#     pending_payment_data = {
+#         'payment_type': 'appointment',
+#         'payment_id': payment_id,
+#         'patient_to_pay': appointment['patient'],
+#         'amount_due': 50,
+#     }
+#     pending_payments.append(pending_payment_data)
+
+
+
+###################### MY VERSION OF CHECK_APPOINTMENT_TIMING:
+def check_appointment_timing(appointments):
+    current_time = datetime.now()
+    for appointment in appointments:
+        appointment_time = datetime.strptime(appointment['time'], '%H:%M:%S')
+
+        if appointment_time < current_time:
+            appointment['status'] = 'Complete'
+            rand_number = random.randint(100,999)
+            rand_letter = random.choice(string.ascii_letters)
+            payment_id = f"{rand_number}{rand_letter}"
+            pending_payment_data = {
+                'payment_type': 'appointment',
+                'payment_id': payment_id,
+                'patient_to_pay': appointment['patient'],
+                'amount_due': 50
+                }
+            pending_payments.append(pending_payment_data)
+            print(appointment)
         
-# check_appointment_timing(appointments)
+check_appointment_timing(appointments)
     
 
 
@@ -496,13 +503,14 @@ def view_upcoming_appointments_patient():
 
 
 
-##################################### SHOW A TABLE OF PAYMENTS TO BE DONE, FIRST COLUMN HAS PAYMENT TYPE (APPOINTMENT, PRESCRIPTION, ETC.), SECOND HAS AMOUNT DUE, NO PAY BUTTON (THAT WILL BE DONE IN PROCESS PAYMENTS!)
+##################################### SHOW A TABLE OF PAYMENTS TO BE DONE, FIRST COLUMN HAS PAYMENT TYPE (APPOINTMENT, PRESCRIPTION, ETC.), SECOND HAS PAYMENT ID, THIRD HAS AMOUNT DUE, NO PAY BUTTON (THAT WILL BE DONE IN PROCESS PAYMENTS!)
 @app.route('/patient/pending-payments', methods=['GET','POST'])
 def view_pending_payments():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
-    return render_template('viewPendingPayments(16).html')
+    return render_template('viewPendingPayments(16).html',
+        pending_payments=pending_payments)
 
 
 
