@@ -29,21 +29,27 @@
 
     <div class="form_container">
         <div class="form">
-            <form>
-                <label for="patient_name">Patient Name:</label>
-                <input type="text">
+            <form method="POST">
+                <label for="p_name">Patient's Name:</label>
+                <input type="text" id="p_name" name="p_name" required>
                 <br>
-                <label for="patient_age">Patient Age:</label>
-                <input type="number">
+                <label for="p_dob">Date of Birth:</label>
+                <input type="date" id="p_dob" name="p_dob" required>
                 <br>
-                <label for="patient_gender">Patient Gender:</label>
-                <input type="radio">Male 
-                <input type="radio">Female
+                <label for="p_med_history">Medical History (any injuries, illnesses, medications, etc. patient has had):</label>
+                <input type="text" id="p_med_history" name="p_med_history" required>
+                <!-- <br>
+                <label for="p_name">Patient's Name:</label>
+                <input type="text" id="" name="">
                 <br>
-                <label for="medical_history">Has the patient had any medical issues before?</label>
-                <input type="radio">Yes 
-                <input type="radio">No
+                <label for="p_name">Patient's Name:</label>
+                <input type="text" id="" name="">
                 <br>
+                <label for="p_name">Patient's Name:</label>
+                <input type="text" id="" name="">
+                <br>
+                <label for="p_name">Patient's Name:</label>
+                <input type="text" id="" name=""> -->
                 <button class="button">Add Patient's Record</button>
             </form>
         </div>

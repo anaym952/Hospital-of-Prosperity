@@ -2,16 +2,9 @@
 ########### COMMIT THOSE CHANGES TO BACKUP WHEN IN THAT BRANCH,
 ########### THEN MAKE MAIN BRANCH UP TO DATE BY SWITCHING TO MAIN BRANCH AND MERGING IT WITH BACKUP
 
-############################################ How to format prescriptions:
-##################### TOP: hospital name, physical address
-##################### Below: doctor name, specialization (specialization will be only displayed on patient side when patient recieves and opens the prescription)
-##################### Below: patient name, age, gender, date (age and gender will only be displayed on the patient side when patient officially recieves the issued prescription)
-##################### Below: Blood pressure (ex: '120/80'mmHg), pulse rate (ex: '70'bpm)
-##################### Below: medicine to prescribe, space to write drug instructions/description
-##################### Bottom: doctor signature (do this later with instructor)
-
-################# CONTINUE TO WORK ON THE PATIENT SIDE OF RECIEVING PRESCRIPTIONS AND FINISH SOON!
+###### CONTINUE TO WORK ON THE CSS OF THE PATIENT SIDE OF RECIEVING PRESCRIPTIONS AND FINISH SOON!
 ############### ADD DOCTOR SIGNATURE TO ISSUE_PRESCRIPTIONS() LATER (WITH INSTRUCTOR'S HELP)
+##### ONLY THE PATIENT'S ASSIGNED DOCTOR WILL BE ABLE TO CREATE RECORDS FOR THE PATIENT (NO OTHER DOCTORS)
 ######################### MAKE SURE THAT USER IS LOGGED OUT BEFORE LOGGING IN AGAIN (FIX LATER)
 
 from flask import Flask, render_template, request, redirect, url_for, session
@@ -715,11 +708,41 @@ def issue_prescriptions():
     )
 
 
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+######### IMPORTANT - THE FOLLOWING WILL BE IN A PATIENT'S RECORD:
+######### NAME, DATE OF BIRTH, GENDER (TAKEN DURING REGISTRATION), MEDICAL HISTORY (ISSUES PATIENT MAY HAVE HAD BEFORE)
+# HEIGHT, WEIGHT (BOTH TAKEN DURING REGISTRATION), BLOOD PRESSURE, BLOOD SUGAR (50-80 mg/dL VERY LOW, 80-100 NORMAL, 101-125 HIGH, 126-150 DIABETIC, 150-300 VERY DIABETIC)
+######### CURRENT CONDITIONS/ILLNESSES/DIAGNOSES, CURRENT MEDICATIONS, IMMUNIZATION STATUS (VACCINES)
+######### OTHER GENERAL COMMENTS ABOUT THE PATIENT FROM THE DOCTOR
 
+######### UPDATE THIS PAGE'S FORM CSS LATER TO HAVE BETTER INPUT BOX WIDTHS, SECTIONS FOR EACH NEW LINES, ETC.
+# MAKE SURE THAT ONLY THE PATIENT'S DOCTOR IS MAKING THEIR RECORD, AND ALSO DON'T ALLOW DOCTOR TO ADD RECORD IF PATIENT ALREADY HAS ONE MADE
 @app.route('/doctor/add-patient-records', methods=['GET','POST'])
 def add_patient_records():
     if session.get('user_role') != 'doctor':
         return redirect(url_for('doctor_login'))
+    
+    if request.method == 'POST':
+
+        p_name = request.form.get('p_name', '').strip()
+        p_dob = request.form.get('p_dob', '').strip()
+        p_med_history = request.form.get('p_med_history', '').strip()
+        p_bp = request.form.get('p_bp', '').strip()
+        p_bs = request.form.get('p_bs', '').strip()
+        p_current_status = request.form.get('p_current_status', '').strip()
+        p_current_meds = request.form.get('p_current_meds', '').strip()
+        ######## CHECKBOX INPUT TO SEE WHICH VACCINES PATIENT HAS TAKEN AND WHICH NOT
+        p_immunization_status = request.form.get('p_immunization_status', '').strip()
+        other_comments = request.form.get('other_comments', '').strip()
+
+
 
     return render_template('addPatientsRecords(11).html')
 
@@ -978,7 +1001,7 @@ def manage_emergency_rooms():
             else:
                 for emergency_room in emergency_rooms:
                     if emergency_room.get('occupied_by') == patient_to_assign:
-                        error = f"{patient_to_assign} is already assigned to emergency room {emergency_room['room']}."
+                        error = f"{patient_to_assign} is already assigned to emergency room {emergency_room['room']}. Please choose another patient to assign to this emergency room."
                         break
 
                 if not error:

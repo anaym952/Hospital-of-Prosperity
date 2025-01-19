@@ -40,13 +40,19 @@
                 </tr>
             </thead>
             <tbody>
-                {% for medicine in med_inventory %}
+                {% if med_inventory %}
+                    {% for medicine in med_inventory %}
+                    <tr>
+                        <td>{{ medicine.med_name }}</td>
+                        <td>{{ medicine.med_status }}</td>
+                        <td>{{ medicine.med_quantity }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
                 <tr>
-                    <td>{{ medicine.med_name }}</td>
-                    <td>{{ medicine.med_status }}</td>
-                    <td>{{ medicine.med_quantity }}</td>
+                    <td colspan="3" style="text-align: center;">None</td>
                 </tr>
-                {% endfor %}
+                {% endif %}
             </tbody>
         </table>
     </div>
