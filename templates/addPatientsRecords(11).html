@@ -33,24 +33,41 @@
                 <label for="p_name">Patient's Name:</label>
                 <input type="text" id="p_name" name="p_name" required>
                 <br>
-                <label for="p_dob">Date of Birth:</label>
-                <input type="date" id="p_dob" name="p_dob" required>
-                <br>
                 <label for="p_med_history">Medical History (any injuries, illnesses, medications, etc. patient has had):</label>
                 <input type="text" id="p_med_history" name="p_med_history" required>
-                <!-- <br>
-                <label for="p_name">Patient's Name:</label>
-                <input type="text" id="" name="">
                 <br>
-                <label for="p_name">Patient's Name:</label>
-                <input type="text" id="" name="">
+                <label for="p_bp">Blood Pressure:</label>
+                <input type="number" id="p_bp_1" name="p_bp_1" required>
+                <label>/</label>
+                <input type="number" id="p_bp_2" name="p_bp_2" required>
+                <label>mmHg</label>
                 <br>
-                <label for="p_name">Patient's Name:</label>
-                <input type="text" id="" name="">
+                <label for="p_bs">Blood Sugar:</label>
+                <input type="number" id="p_bs" name="p_bs" required>
+                <label>mg/dL</label>
                 <br>
-                <label for="p_name">Patient's Name:</label>
-                <input type="text" id="" name=""> -->
+                <label for="p_current_status">Current Status (ex: 'lung cancer, diabetes')</label>
+                <input type="text" id="p_current_status" name="p_current_status" required>
+                <br>
+                <label for="p_current_meds">Current Medications (ex: 'aspirin'):</label>
+                <input type="text" id="p_current_meds" name="p_current_meds" required>
+                <br>
+                <label for="p_immunization_status">Immunization Status:</label>
+                <input type="checkbox" id="p_immunization_status" name="p_immunization_status" value="DTaP">DTaP
+                <input type="checkbox" id="p_immunization_status" name="p_immunization_status" value="Polio">Polio
+                <input type="checkbox" id="p_immunization_status" name="p_immunization_status" value="MMR">MMR
+                <input type="checkbox" id="p_immunization_status" name="p_immunization_status" value="Varicella">Varicella
+                <br>
+                <label for="other_comments">Other Comments About Patient (optional):</label>
+                <input type="text" id="other_comments" name="other_comments">
+                <br>
                 <button class="button">Add Patient's Record</button>
+                {% if error %}
+                <p style="color: red; margin-top: 10px;">{{ error }}</p>
+                {% endif %}
+                {% if success_message %}
+                <p style="color: rgb(52, 183, 23); margin-top: 10px;">{{ success_message }}</p>
+                {% endif %}
             </form>
         </div>
     </div>

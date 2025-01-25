@@ -4,8 +4,8 @@
 
 ###### CONTINUE TO WORK ON THE CSS OF THE PATIENT SIDE OF RECIEVING PRESCRIPTIONS AND FINISH SOON!
 ############### ADD DOCTOR SIGNATURE TO ISSUE_PRESCRIPTIONS() LATER (WITH INSTRUCTOR'S HELP)
-##### ONLY THE PATIENT'S ASSIGNED DOCTOR WILL BE ABLE TO CREATE RECORDS FOR THE PATIENT (NO OTHER DOCTORS)
 ######################### MAKE SURE THAT USER IS LOGGED OUT BEFORE LOGGING IN AGAIN (FIX LATER)
+###################### IF CURRENT TIME PASSES APPOINTMENT TIME, MAKE IT SO ADMIN DECIDES WHETHER APPOINTMENT IS COMPLETE AND PATIENT IS CHARGED OR IF APPOINTMENT WILL BE DELETED AND PATIENT WONT BE CHARGED
 
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -33,6 +33,7 @@ prescriptions = []
 pending_payments = []
 payment_history = []
 inventory = []
+patients_records = []
 emergency_rooms = [
     {'room':1, 'status':'Vacant', 'occupied_by':None}, 
     {'room':2, 'status':'Vacant', 'occupied_by':None}, 
@@ -92,7 +93,7 @@ def register_patient():
         except ValueError:
             return render_template('PRegistration(2).html', error="Age must be an integer and Initial Deposit must be a number.")
 
-        if age <= 0 or age >= 130:
+        if age < 0 or age > 130:
             return render_template('PRegistration(2).html', error="Invalid age.")
        
         if len(phone_number) != 10 or not phone_number.isdigit():
@@ -460,26 +461,26 @@ def book_appointment():
 
 
 ###################### MY VERSION OF CHECK_APPOINTMENT_TIMING:
-def check_appointment_timing(appointments):
-    current_time = datetime.now()
-    for appointment in appointments:
-        appointment_time = datetime.strptime(appointment['time'], '%H:%M:%S')
+# def check_appointment_timing(appointments):
+#     current_time = datetime.now()
+#     for appointment in appointments:
+#         appointment_time = datetime.strptime(appointment['time'], '%H:%M:%S')
 
-        if appointment_time < current_time:
-            appointment['status'] = 'Complete'
-            rand_number = random.randint(100,999)
-            rand_letter = random.choice(string.ascii_letters)
-            payment_id = f"{rand_number}{rand_letter}"
-            pending_payment_data = {
-                'payment_type': 'appointment',
-                'payment_id': payment_id,
-                'patient_to_pay': appointment['patient'],
-                'amount_due': 50
-                }
-            pending_payments.append(pending_payment_data)
-            print(appointment)
+#         if appointment_time < current_time:
+#             appointment['status'] = 'Complete'
+#             rand_number = random.randint(100,999)
+#             rand_letter = random.choice(string.ascii_letters)
+#             payment_id = f"{rand_number}{rand_letter}"
+#             pending_payment_data = {
+#                 'payment_type': 'appointment',
+#                 'payment_id': payment_id,
+#                 'patient_to_pay': appointment['patient'],
+#                 'amount_due': 50
+#                 }
+#             pending_payments.append(pending_payment_data)
+#             print(appointment)
         
-check_appointment_timing(appointments)
+# check_appointment_timing(appointments)
     
 
 
@@ -488,7 +489,7 @@ def view_upcoming_appointments_patient():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
-    check_appointment_timing(appointments)
+    # check_appointment_timing(appointments)
     current_user = session.get('user_name')
     user_appointments = [appointment for appointment in appointments if appointment['patient'] == current_user and appointment['status'] == "Incomplete"]
     
@@ -708,43 +709,93 @@ def issue_prescriptions():
     )
 
 
-##############################
-##############################
-##############################
-##############################
-##############################
-##############################
-##############################
-##############################
-######### IMPORTANT - THE FOLLOWING WILL BE IN A PATIENT'S RECORD:
-######### NAME, DATE OF BIRTH, GENDER (TAKEN DURING REGISTRATION), MEDICAL HISTORY (ISSUES PATIENT MAY HAVE HAD BEFORE)
-# HEIGHT, WEIGHT (BOTH TAKEN DURING REGISTRATION), BLOOD PRESSURE, BLOOD SUGAR (50-80 mg/dL VERY LOW, 80-100 NORMAL, 101-125 HIGH, 126-150 DIABETIC, 150-300 VERY DIABETIC)
-######### CURRENT CONDITIONS/ILLNESSES/DIAGNOSES, CURRENT MEDICATIONS, IMMUNIZATION STATUS (VACCINES)
-######### OTHER GENERAL COMMENTS ABOUT THE PATIENT FROM THE DOCTOR
 
 ######### UPDATE THIS PAGE'S FORM CSS LATER TO HAVE BETTER INPUT BOX WIDTHS, SECTIONS FOR EACH NEW LINES, ETC.
-# MAKE SURE THAT ONLY THE PATIENT'S DOCTOR IS MAKING THEIR RECORD, AND ALSO DON'T ALLOW DOCTOR TO ADD RECORD IF PATIENT ALREADY HAS ONE MADE
 @app.route('/doctor/add-patient-records', methods=['GET','POST'])
 def add_patient_records():
     if session.get('user_role') != 'doctor':
         return redirect(url_for('doctor_login'))
     
     if request.method == 'POST':
-
+        valid_record = True
         p_name = request.form.get('p_name', '').strip()
-        p_dob = request.form.get('p_dob', '').strip()
         p_med_history = request.form.get('p_med_history', '').strip()
-        p_bp = request.form.get('p_bp', '').strip()
+        p_bp_1 = request.form.get('p_bp_1', '').strip()
+        p_bp_2 = request.form.get('p_bp_2', '').strip()
         p_bs = request.form.get('p_bs', '').strip()
         p_current_status = request.form.get('p_current_status', '').strip()
         p_current_meds = request.form.get('p_current_meds', '').strip()
-        ######## CHECKBOX INPUT TO SEE WHICH VACCINES PATIENT HAS TAKEN AND WHICH NOT
-        p_immunization_status = request.form.get('p_immunization_status', '').strip()
+        p_immunization_status = request.form.getlist('p_immunization_status')
         other_comments = request.form.get('other_comments', '').strip()
 
+        if patient_accounts != []:
+            for patient in patient_accounts:
+                if p_name.capitalize() == patient['account_name'].capitalize():
+                    print(p_name)
+                    if patient['assigned_doctor'] != session.get('user_name') or patient['assigned_doctor'] == "N/A":
+                        error = f"You may only create medical records for your assigned patients."
+                        valid_record = False
+                    else:
+                        p_age = patient['age']
+                        p_gender = patient['gender']
+                        p_height = patient['height']
+                        p_weight = patient['weight']
+                elif not any(p_name.capitalize() == patient['account_name'].capitalize() for patient in patient_accounts):
+                    print(p_name.upper())
+                    error = f"{p_name.capitalize()} is not registered in this hospital."
+                    valid_record = False
+        else:
+            print(p_name.capitalize())
+            error = f"{p_name.capitalize()} is not registered in this hospital."
+            valid_record = False
 
+        if any(p_name.capitalize() == patient_record['patient_name'].capitalize() for patient_record in patients_records if patients_records != []):
+            error = f"{p_name.capitalize()} already has an existing medical record."
+            valid_record = False
 
-    return render_template('addPatientsRecords(11).html')
+        if int(p_bp_1) < 80 or int(p_bp_2) < 50 or int(p_bp_1) > 200 or int(p_bp_2) > 140:
+            error = f"Invalid blood pressure range."
+            valid_record = False
+
+        if int(p_bs) < 50 or int(p_bs) > 300:
+            error = f"Invalid blood sugar range."
+            valid_record = False
+        
+        if not p_immunization_status:
+            p_immunization_status = "None"
+        
+        if not other_comments:
+            other_comments = "None"
+
+        if valid_record:
+            p_bp = f"{p_bp_1}/{p_bp_2}"
+            p_age=p_age if 'p_age' in locals() else None
+            p_gender=p_gender if 'p_gender' in locals() else None
+            p_height=p_height if 'p_height' in locals() else None
+            p_weight=p_weight if 'p_weight' in locals() else None
+
+            med_record_data = {
+                'patient_name': p_name.capitalize(),
+                'age': p_age,
+                'gender': p_gender,
+                'medical_history': p_med_history,
+                'height': p_height,
+                'weight': p_weight,
+                'blood_pressure': p_bp,
+                'blood_sugar': p_bs,
+                'current_status': p_current_status,
+                'current_medications': p_current_meds,
+                'immunization_status': p_immunization_status,
+                'other_comments': other_comments
+            }
+            patients_records.append(med_record_data)
+            success_message = f"You have successfully added the medical record for {p_name.capitalize()}."
+            print(patients_records)
+
+    return render_template('addPatientsRecords(11).html',
+        error=error if 'error' in locals() else None,
+        success_message=success_message if 'success_message' in locals() else None
+        )
 
 
 
