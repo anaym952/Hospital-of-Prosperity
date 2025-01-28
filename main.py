@@ -6,6 +6,7 @@
 ############### ADD DOCTOR SIGNATURE TO ISSUE_PRESCRIPTIONS() LATER (WITH INSTRUCTOR'S HELP)
 ######################### MAKE SURE THAT USER IS LOGGED OUT BEFORE LOGGING IN AGAIN (FIX LATER)
 ###################### IF CURRENT TIME PASSES APPOINTMENT TIME, MAKE IT SO ADMIN DECIDES WHETHER APPOINTMENT IS COMPLETE AND PATIENT IS CHARGED OR IF APPOINTMENT WILL BE DELETED AND PATIENT WONT BE CHARGED
+##################### LATER, FIX ISSUE OF ERROR COMING NEXT TO FORM INSTEAD OF BENEATH THE FORM IN A FEW FUNCTIONS/PAGES
 
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -736,6 +737,7 @@ def add_patient_records():
                         error = f"You may only create medical records for your assigned patients."
                         valid_record = False
                     else:
+                        p_doctor = patient['assigned_doctor']
                         p_age = patient['age']
                         p_gender = patient['gender']
                         p_height = patient['height']
@@ -769,6 +771,7 @@ def add_patient_records():
 
         if valid_record:
             p_bp = f"{p_bp_1}/{p_bp_2}"
+            p_doctor=p_doctor if 'p_doctor' in locals() else None
             p_age=p_age if 'p_age' in locals() else None
             p_gender=p_gender if 'p_gender' in locals() else None
             p_height=p_height if 'p_height' in locals() else None
@@ -776,6 +779,7 @@ def add_patient_records():
 
             med_record_data = {
                 'patient_name': p_name.capitalize(),
+                'patients_doctor': p_doctor,
                 'age': p_age,
                 'gender': p_gender,
                 'medical_history': p_med_history,
@@ -804,7 +808,35 @@ def view_patient_records():
     if session.get('user_role') != 'doctor':
         return redirect(url_for('doctor_login'))
     
-    return render_template('viewPatientsRecords(12).html')
+    error = None
+
+    if request.method == 'POST':
+        valid_record_to_view = True
+        patient_to_view = request.form.get('patient_to_view', '').strip()
+        
+        if patients_records != []:
+            for patient_record in patients_records:
+
+                if patient_to_view.capitalize() == patient_record['patient_name']:
+                    if patient_record['patients_doctor'] != session.get('user_name') or patient_record['patients_doctor'] == "N/A":
+                        error = f"You may only view medical records of your assigned patients."
+                        valid_record_to_view = False
+
+                elif not any(patient_to_view.capitalize() == patient_record['patient_name'] for patient_record in patients_records):
+                    error = f"{patient_to_view.capitalize()} does not have a medical record yet."
+                    valid_record_to_view = False
+
+        else:
+            error = f"{patient_to_view.capitalize()} does not have a medical record yet."
+            valid_record_to_view = False
+
+    return render_template(
+        'viewPatientsRecords(12).html',
+        hospital_address=hospital_address,
+        valid_record_to_view=valid_record_to_view if 'valid_record_to_view' in locals() else None,
+        patients_records=patients_records,
+        error=error
+        )
 
 
 

@@ -29,14 +29,33 @@
 
     <div class="form_container">
         <div class="form">
-            <form>
-                <label for="patient_name">Patient Name:</label>
-                <input type="text">
+            <form method='POST'>
+                <label for="patient_to_view_record">Name of Patient to View Record Of:</label>
+                <input type="text" id="patient_to_view" name="patient_to_view" required>
                 <br>
                 <button class="button">View Patient's Record</button>
             </form>
         </div>
+        {% if error %}
+        <p style="color: red; margin-top: 10px;">{{ error }}</p>
+        {% endif %}
+        {% if success_message %}
+        <p style="color: rgb(52, 183, 23); margin-top: 10px;">{{ success_message }}</p>
+        {% endif %}
     </div>
+
+
+    {% if valid_record_to_view %}
+        <div style="display: flex; margin-top: 20px; justify-content: center; gap: 200px; align-items: center; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+            <div>
+                <h2 style="color: red; text-decoration: underline;">Hospital of Prosperity</h2>
+            </div>
+            <div>
+                <h4>{{ hospital_address }}</h4>
+            </div>
+        </div>
+        <!-- ADD MORE AFTER THIS LATER (ACTUAL RECORD DETAILS)... -->
+    {% endif %}
 
     <div class="footer_container">
         <div class="footer">
