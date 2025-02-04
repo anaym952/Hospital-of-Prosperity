@@ -34,14 +34,14 @@
                 <input type="text" id="patient_to_view" name="patient_to_view" required>
                 <br>
                 <button class="button">View Patient's Record</button>
+                {% if error %}
+                <p style="color: red; margin-top: 10px;">{{ error }}</p>
+                {% endif %}
+                {% if success_message %}
+                <p style="color: rgb(52, 183, 23); margin-top: 10px;">{{ success_message }}</p>
+                {% endif %}
             </form>
         </div>
-        {% if error %}
-        <p style="color: red; margin-top: 10px;">{{ error }}</p>
-        {% endif %}
-        {% if success_message %}
-        <p style="color: rgb(52, 183, 23); margin-top: 10px;">{{ success_message }}</p>
-        {% endif %}
     </div>
 
 
@@ -54,7 +54,65 @@
                 <h4>{{ hospital_address }}</h4>
             </div>
         </div>
-        <!-- ADD MORE AFTER THIS LATER (ACTUAL RECORD DETAILS)... -->
+
+        {% for patient_record in patients_records %}
+        {% if patient_record['patient_name'] == patient_to_view.capitalize() %}
+            <div style="margin-top: 40px; align-items: center; justify-content: center; display: flex; flex-direction: column; gap: 20px;">
+                        
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <div>
+                        Patient's Name: {{ patient_record['patient_name'] }}
+                    </div>
+                    <div>
+                        Age: {{ patient_record['age'] }}
+                    </div>
+                    <div>
+                        Gender: {{ patient_record['gender'] }}
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+                    <div>
+                        Medical History: {{ patient_record['medical_history'] }}
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+                    <div>
+                        Height: {{ patient_record['height'] }}meters
+                    </div>
+                    <div>
+                        Weight: {{ patient_record['weight'] }}lbs
+                    </div>
+                    <div>
+                        Blood Pressure: {{ patient_record['blood_pressure'] }}mmHg
+                    </div>
+                    <div>
+                        Blood Sugar: {{ patient_record['blood_sugar'] }}mg/dL
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+                    <div>
+                        Current Status: {{ patient_record['current_status'] }}
+                    </div>
+                    <div>
+                        Current Medications: {{ patient_record['current_medications'] }}
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+                    <div>
+                        Immunization Status: {{ patient_record['immunization_status'] }}
+                    </div>
+                    <div>
+                        Other Comments: {{ patient_record['other_comments'] }}
+                    </div>
+                </div>
+
+            </div>
+        {% endif %}
+        {% endfor %}
     {% endif %}
 
     <div class="footer_container">
