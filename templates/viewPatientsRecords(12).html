@@ -59,7 +59,7 @@
         {% if patient_record['patient_name'] == patient_to_view.capitalize() %}
             <div style="margin-top: 40px; align-items: center; justify-content: center; display: flex; flex-direction: column; gap: 20px;">
                         
-                <div style="display: flex; justify-content: center; align-items: center;">
+                <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
                     <div>
                         Patient's Name: {{ patient_record['patient_name'] }}
                     </div>
@@ -79,7 +79,7 @@
 
                 <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
                     <div>
-                        Height: {{ patient_record['height'] }}meters
+                        Height: {{ patient_record['height'] }}m
                     </div>
                     <div>
                         Weight: {{ patient_record['weight'] }}lbs

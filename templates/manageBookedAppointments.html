@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOP - Update Inventory</title>
+    <title>HOP - Manage Booked Appointments</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <link rel="stylesheet" href="/static/style.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -27,30 +27,6 @@
                 <a href="{{url_for('manage_emergency_rooms')}}"><li>Manage Emergency Rooms</li></a>
                 <a href="{{url_for('logout')}}"><li>Logout</li></a>
             </ul>
-        </div>
-    </div>
-
-    <div class="form_container">
-        <div class="form">
-            <form method='POST'>
-                <label for="medicine_name">Medicine Name:</label>
-                <input type="text" id="med_name" name="med_name" required>
-                <br>
-                <label for="new_medicine_status">New Status:</label>
-                <input type="radio" id="new_med_status" name="new_med_status" value="Healthy" required>Healthy
-                <input type="radio" id="new_med_status" name="new_med_status" value="Expired" required>Expired
-                <br>
-                <label for="new_medicine_quantity">New Quantity:</label>
-                <input type="number" id="new_med_quantity" name="new_med_quantity" required>
-                <br>
-                <button class="button">Update Medicine</button>
-                {% if error %}
-                <p style="color: red; margin-top: 10px;">{{ error }}</p>
-                {% endif %}
-                {% if success_message %}
-                <p style="color: rgb(52, 183, 23); margin-top: 10px;">{{ success_message }}</p>
-                {% endif %}
-            </form>
         </div>
     </div>
 

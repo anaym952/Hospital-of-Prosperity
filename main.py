@@ -6,18 +6,33 @@
 ########### COMMIT THOSE CHANGES TO BACKUP WHEN IN THAT BRANCH,
 ########### THEN MAKE MAIN BRANCH UP TO DATE BY SWITCHING TO MAIN BRANCH AND MERGING IT WITH BACKUP
 
-############### ADD DOCTOR SIGNATURE TO ISSUE_PRESCRIPTIONS() LATER (WITH INSTRUCTOR'S HELP)
-###### CONTINUE TO WORK ON THE CSS OF THE PATIENT SIDE OF RECIEVING PRESCRIPTIONS AND FINISH SOON!
 
-###################### ********** IMPORTANT **********
+#################******************************VERY IMPORTANT******************************
+################################ ROADMAP FOR REST OF PROJECT (PRIORITY ORDER):
+
+#COMPLETE THE APPOINTMENT SYSTEM:
 ###################### IF CURRENT TIME PASSES APPOINTMENT TIME, MAKE IT SO ADMIN DECIDES WHETHER APPOINTMENT IS COMPLETE AND PATIENT IS CHARGED OR IF APPOINTMENT WILL BE DELETED AND PATIENT WONT BE CHARGED
 
+#COMPLETE THE WHOLE PAYMENT SYSTEM:
+###################### DO PAYMENT FUNCTIONS (VIEW PENDING, VIEW HISTORY, PROCESS PAYMENTS)
+
+#ADD THIS IMPORTANT FEATURE THAT WAS FORGOTTEN:
+################### IF TIME, ADD THE OPTION TO REMOVE A PATIENT FROM AN ASSIGNED EMERGENCY ROOM!
+
+#FIX THIS MINOR ISSUE WITH THE LOGIN SYSTEM IF POSSIBLE:
 ######################### MAKE SURE THAT USER IS LOGGED OUT BEFORE LOGGING IN AGAIN (FIX LATER)
 
+#FINISH PATIENT PORTAL:
+############################# REDO AND USE BETTER CSS
+
+#FINISH THE NECESSARY CSS AND FEATURES OF A FEW SPECIFIC FUNCTIONS:
+########################## CONTINUE TO WORK ON THE CSS OF THE PATIENT SIDE OF RECIEVING PRESCRIPTIONS AND FINISH SOON!
+######################### FINISH THE CSS OF THE VIEW_PATIENTS_RECORDS PAGE LATER!
+############### ADD DOCTOR SIGNATURE TO ISSUE_PRESCRIPTIONS() LATER (WITH INSTRUCTOR'S HELP)
+
+#LAST:::::::::: OVERHAUL AND ENHANCE THE ENTIRE WEBSITE WITH A BETTER THEME OF CSS
 ######################### AT LAST, FIX THE GENERAL PROBLEMS WITH THE CSS OF THE WHOLE WEBSITE & ENHANCE IT TO MAKE IT LOOK MORE PROFESSIONAL (MAYBE USING BOOTSTRAP)
 
-########## NEWEST ERROR:
-############################### FIX MINOR ISSUE WITH VIEW PATIENTS RECORDS LATER (& FINISH THE PAGE'S CSS LATER ALSO)
 
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -844,6 +859,7 @@ def view_patient_records():
     return render_template(
         'viewPatientsRecords(12).html',
         hospital_address=hospital_address,
+        patient_to_view=patient_to_view if 'patient_to_view' in locals() else None,
         valid_record_to_view=valid_record_to_view if 'valid_record_to_view' in locals() else None,
         patients_records=patients_records,
         error=error
@@ -883,9 +899,9 @@ def view_all_accounts():
 
 
 #################################
-##################################
 #################################
-###############################
+#################################
+#################################
 #################################
 #################################
 #################################
@@ -973,6 +989,21 @@ def assign_patient_to_doctor():
         return render_template('assignPatient(7).html', success_message=success_message, patients=patient_accounts)
 
     return render_template('assignPatient(7).html', patients=patient_accounts)
+
+
+
+######## MANAGE BOOKED APPOINTMENTS: SHOW A TABLE OF DETAILS OF APPOINTMENTS THAT HAVE BEEN BOOKED
+
+########## IF CURRENT TIME IS PAST APPOINTMENT BOOKED TIME, GIVE THE ADMIN 2 OPTIONS (2 BUTTONS):
+## GREEN COLOR- MARK AS COMPLETE (APPOINTMENT STATUS IS COMPLETE AND PATIENT IS CHARGED MONEY), OR
+## RED COLOR- DELETE APPOINTMENT (APPOINTMENT IS REMOVED FROM HISTORY AND PATIENT ISN'T CHARGED)
+
+@app.route('/admin/manage-booked-appointments', methods=['GET','POST'])
+def manage_booked_appointments():
+    if session.get('user_role') != 'admin':
+        return redirect(url_for('admin_login'))
+    
+    return render_template('manageBookedAppointments.html')
 
 
 
