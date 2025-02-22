@@ -37,8 +37,8 @@
             <thead class="table-dark">
                 <tr>
                     <th>Doctor</th>
-                    <th>Date</th>
-                    <th>Time</th>
+                    <th>Date & Time</th>
+                    <th>Appointment ID</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,8 +46,11 @@
                     {% for appointment in appointments %}
                         <tr>
                             <td>{{ appointment['doctor'] }}</td>
-                            <td>{{ appointment['date'] }}</td>
-                            <td>{{ appointment['time'] }}</td>
+                            <td>{{ appointment['date'] }}
+                                <br>
+                                {{ appointment['time'] }}
+                            </td>
+                            <td>{{ appointment['appointment_id'] }}</td>
                         </tr>
                     {% endfor %}
                 {% else %}

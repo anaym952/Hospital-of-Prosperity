@@ -44,11 +44,13 @@
             <tbody>
                 {% if pending_payments %}
                     {% for pending_payment in pending_payments %}
+                    {% if pending_payment['patient_to_pay'] == patient_logged_in %}
                         <tr>
-                            <td>{{ pending_payment['payment_type'] }}</td>
+                            <td>{{ pending_payment['payment_type'] }} #{{ pending_payment['appointment_or_prescription_id'] }}</td>
                             <td>{{ pending_payment['payment_id'] }}</td>
                             <td>${{ pending_payment['amount_due'] }}</td>
                         </tr>
+                    {% endif %}
                     {% endfor %}
                 {% else %}
                     <tr>

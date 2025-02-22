@@ -10,11 +10,8 @@
 #################******************************VERY IMPORTANT******************************
 ################################ ROADMAP FOR REST OF PROJECT (PRIORITY ORDER):
 
-#COMPLETE THE APPOINTMENT SYSTEM:
-###################### IF CURRENT TIME PASSES APPOINTMENT TIME, MAKE IT SO ADMIN DECIDES WHETHER APPOINTMENT IS COMPLETE AND PATIENT IS CHARGED OR IF APPOINTMENT WILL BE DELETED AND PATIENT WONT BE CHARGED
-
 #COMPLETE THE WHOLE PAYMENT SYSTEM:
-###################### DO PAYMENT FUNCTIONS (VIEW PENDING, VIEW HISTORY, PROCESS PAYMENTS)
+###################### DO PAYMENT FUNCTIONS (VIEW HISTORY, PROCESS PAYMENTS)
 
 #ADD THIS IMPORTANT FEATURE THAT WAS FORGOTTEN:
 ################### IF TIME, ADD THE OPTION TO REMOVE A PATIENT FROM AN ASSIGNED EMERGENCY ROOM!
@@ -79,16 +76,12 @@ emergency_rooms = [
     {'room':15, 'status':'Vacant', 'occupied_by':None}, 
     ]
 
-# session['user_role'] = None
-# session['user_name'] = None
-# session['logged_in'] = False
 
 
 #################################################################### HOME FUNCTIONS/PAGES:
 
 @app.route("/")
 def home():
-    # print(session['user_role'], session['user_name'], session['logged_in'])
     return render_template('home.html')
     
 
@@ -166,9 +159,6 @@ def register_patient():
 @app.route('/patient-login', methods=['GET', 'POST'])
 def patient_login():
     if request.method == 'POST':
-        # if session.get('logged_in'):
-        #     print(session['logged_in'])
-        #     return render_template('patientLogin.html', error=f"User is already logged in. Logout to login with a different account")
 
         account_name = request.form.get('account_name', '').strip()
         password = request.form.get('password', '').strip()
@@ -256,8 +246,6 @@ def register_doctor():
 @app.route('/doctor-login', methods=['GET','POST'])
 def doctor_login():
     if request.method == 'POST':
-        # if session.get('logged_in'):
-        #     return render_template('doctorLogin.html', error=f"User is already logged in. Logout to login with a different account")
 
         account_name = request.form.get('account_name', '').strip()
         password = request.form.get('password', '').strip()
@@ -268,7 +256,7 @@ def doctor_login():
             return render_template("doctorLogin.html", error="All fields must be filled.")
         
         for doctor in doctor_accounts:
-            if account_name == doctor['account_name'] and check_password_hash(doctor['password'], password) and hospital_code == "HospitalofProsperity@2024":
+            if account_name == doctor['account_name'] and check_password_hash(doctor['password'], password) and hospital_code == "HospitalofProsperity@2025":
                 session['user_role'] = 'doctor'
                 session['user_name'] = account_name
                 session['logged_in'] = True
@@ -284,8 +272,6 @@ def doctor_login():
 @app.route('/admin-login', methods=['GET','POST'])
 def admin_login():
     if request.method == 'POST':
-        # if session.get('logged_in'):
-        #     return render_template('adminLogin.html', error=f"User is already logged in. Logout to login as admin")
 
         admin_name = request.form.get('admin_name', '').strip()
         admin_password = request.form.get('admin_password', '').strip()
@@ -295,7 +281,7 @@ def admin_login():
         if not all([admin_name, admin_password, hospital_code]):
             return render_template("adminLogin.html", error="All fields must be filled.")
         
-        if not admin_name == "Anay Murarka" or not admin_password == "hjbfvdhj'.,732vf" or not hospital_code == "HospitalofProsperity@2024":
+        if not admin_name == "Anay Murarka" or not admin_password == "hjbfvdhj'.,732vf" or not hospital_code == "HospitalofProsperity@2025":
             return render_template("adminLogin.html", error="Invalid admin name, password, or hospital code!")
         
         session['user_role'] = 'admin'
@@ -390,40 +376,6 @@ def withdraw_money():
 
 
 
-
-# @app.route('/patient/book-appointment', methods=['GET', 'POST'])
-# def book_appointment():
-#     if session.get('user_role') != 'patient':
-#         return redirect(url_for('patient_login'))
-
-#     if request.method == 'POST':
-#         try:
-#             booked_appointment = int(request.form.get('booked_appointment', '').strip())
-#         except ValueError:
-#             error = "Invalid appointment ID. Please try again."
-#             return redirect(url_for('book_appointment'))
-
-#         current_user = session.get('user_name')
-#         if any(app['patient'] == current_user for app in appointments):
-#             error = "You can't book more than 1 appointment per day."
-#         else:
-#             for app in appointments:
-#                 if app['appointment_id'] == booked_appointment and app['patient'] == "None":
-#                     app['patient'] = current_user
-#                     success_message = f"Successfully booked appointment #{app['appointment_id']} with {app['doctor']} on {app['date']} @{app['time']}."
-#                     break
-#             else:
-#                 error = "Invalid appointment to book."
-
-#     return render_template('bookAppointment(8).html',
-#         error=error if 'error' in locals() else None,
-#         success_message=success_message if 'success_message' in locals() else None, 
-#         appointments=appointments
-#         )
-
-
-
-###################### MY VERSION OF BOOK APPOINTMENTS:
 @app.route('/patient/book-appointment', methods=['GET', 'POST'])
 def book_appointment():
     if session.get('user_role') != 'patient':
@@ -444,7 +396,7 @@ def book_appointment():
             error = "You can't book more than 1 appointment per day."
         else:
             for appointment in appointments:
-                if booked_appointment == appointment['appointment_id'] and appointment['patient'] == "None":
+                if booked_appointment == appointment['appointment_id'] and appointment['patient'] == "None" and appointment['status'] == "Incomplete":
                     appointment['patient'] = session.get('user_name')
                     booked = True
                     success_message = f"You have successfully booked appointment #{appointment['appointment_id']} with {appointment['doctor']} on {appointment['date']} @{appointment['time']}."
@@ -464,59 +416,11 @@ def book_appointment():
 
 
 
-
-# def check_appointment_timing(appointments):
-#     current_time = datetime.now()
-#     for appointment in appointments:
-#         appointment_time = datetime.strptime(appointment['time'], '%H:%M:%S')
-#         if appointment['status'] == 'Incomplete' and appointment_time < current_time:
-#             appointment['status'] = 'Complete'
-#             generate_pending_payment(appointment)
-
-# def generate_pending_payment(appointment):
-#     rand_number = random.randint(100, 999)
-#     rand_letter = random.choice(string.ascii_letters)
-#     payment_id = f"{rand_number}{rand_letter}"
-#     pending_payment_data = {
-#         'payment_type': 'appointment',
-#         'payment_id': payment_id,
-#         'patient_to_pay': appointment['patient'],
-#         'amount_due': 50,
-#     }
-#     pending_payments.append(pending_payment_data)
-
-
-
-###################### MY VERSION OF CHECK_APPOINTMENT_TIMING:
-# def check_appointment_timing(appointments):
-#     current_time = datetime.now()
-#     for appointment in appointments:
-#         appointment_time = datetime.strptime(appointment['time'], '%H:%M:%S')
-
-#         if appointment_time < current_time:
-#             appointment['status'] = 'Complete'
-#             rand_number = random.randint(100,999)
-#             rand_letter = random.choice(string.ascii_letters)
-#             payment_id = f"{rand_number}{rand_letter}"
-#             pending_payment_data = {
-#                 'payment_type': 'appointment',
-#                 'payment_id': payment_id,
-#                 'patient_to_pay': appointment['patient'],
-#                 'amount_due': 50
-#                 }
-#             pending_payments.append(pending_payment_data)
-#             print(appointment)
-        
-# check_appointment_timing(appointments)
-    
-
-
 @app.route('/patient/view-upcoming-appointments', methods=['GET','POST'])
 def view_upcoming_appointments_patient():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
-    # check_appointment_timing(appointments)
     current_user = session.get('user_name')
     user_appointments = [appointment for appointment in appointments if appointment['patient'] == current_user and appointment['status'] == "Incomplete"]
     
@@ -525,13 +429,15 @@ def view_upcoming_appointments_patient():
 
 
 ##################################### SHOW A TABLE OF PAYMENTS TO BE DONE, FIRST COLUMN HAS PAYMENT TYPE (APPOINTMENT, PRESCRIPTION, ETC.), SECOND HAS PAYMENT ID, THIRD HAS AMOUNT DUE, NO PAY BUTTON (THAT WILL BE DONE IN PROCESS PAYMENTS!)
+###################### FIX THE ERROR WHERE ANOTHER PATIENT'S PENDING PAYMENT SHOWS UP IN A DIFFERENT PATIENT'S ACCOUNT (ONLY THE LOGGED-IN PATIENT'S PENDING PAYMENTS SHOULD SHOW)
 @app.route('/patient/pending-payments', methods=['GET','POST'])
 def view_pending_payments():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
     return render_template('viewPendingPayments(16).html',
-        pending_payments=pending_payments)
+        pending_payments=pending_payments,
+        patient_logged_in=session.get('user_name'))
 
 
 
@@ -564,7 +470,8 @@ def recieve_prescriptions():
                     rand_letter = random.choice(string.ascii_letters)
                     payment_id = f"{rand_number}{rand_letter}"
                     pending_payment_data = {
-                        'payment_type': 'prescription',
+                        'payment_type': 'Prescription',
+                        'appointment_or_prescription_id': prescription['prescription_id'],
                         'payment_id': payment_id,
                         'patient_to_pay': session.get('user_name'),
                         'amount_due': 100
@@ -898,28 +805,7 @@ def view_all_accounts():
     return render_template('viewAccounts(1).html')
 
 
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-#################################
-################################# *IMPORTANT******* PLEASE REMOVE THE TIMEDELTA DAYS=1 AND CHANGE THE TIME TO
-################################# AROUND YOUR OWN TIME WHEN TESTING SO THAT YOU WON'T HAVE TO WAIT FOR ONE OF THE
-################################# DEFAULT APPOINTMENT TIMINGS (TESTING WILL BECOME **MUCH** SHORTER IF YOU DO THIS)
+
 @app.route('/admin/manage-doctor-availability', methods=['GET', 'POST'])
 def manage_doctor_availability():
     if session.get('user_role') != 'admin':
@@ -992,18 +878,42 @@ def assign_patient_to_doctor():
 
 
 
-######## MANAGE BOOKED APPOINTMENTS: SHOW A TABLE OF DETAILS OF APPOINTMENTS THAT HAVE BEEN BOOKED
-
-########## IF CURRENT TIME IS PAST APPOINTMENT BOOKED TIME, GIVE THE ADMIN 2 OPTIONS (2 BUTTONS):
-## GREEN COLOR- MARK AS COMPLETE (APPOINTMENT STATUS IS COMPLETE AND PATIENT IS CHARGED MONEY), OR
-## RED COLOR- DELETE APPOINTMENT (APPOINTMENT IS REMOVED FROM HISTORY AND PATIENT ISN'T CHARGED)
-
 @app.route('/admin/manage-booked-appointments', methods=['GET','POST'])
 def manage_booked_appointments():
     if session.get('user_role') != 'admin':
         return redirect(url_for('admin_login'))
     
-    return render_template('manageBookedAppointments.html')
+    if request.method == 'POST':
+        appointment_id = request.form.get('appointment_id', '').strip()
+
+        for appointment in appointments:
+            if appointment['appointment_id'] == int(appointment_id):
+                
+                if "mark as complete" in request.form:
+                    appointment['status'] = 'Complete'
+                    rand_number = random.randint(100,999)
+                    rand_letter = random.choice(string.ascii_letters)
+                    payment_id = f"{rand_number}{rand_letter}"
+                    pending_payment_data = {
+                        'payment_type': 'Appointment',
+                        'appointment_or_prescription_id': appointment['appointment_id'],
+                        'payment_id': payment_id,
+                        'patient_to_pay': appointment['patient'],
+                        'amount_due': 50
+                        }
+                    pending_payments.append(pending_payment_data)
+                    print(appointment)
+                    print(pending_payments)
+                    success_message = f"Appointment #{appointment['appointment_id']} has been successfully marked as complete and {appointment['patient']} will be charged."
+
+                elif "cancel appointment" in request.form:
+                    success_message = f"Appointment #{appointment['appointment_id']} has been successfully canceled and {appointment['patient']} won't be charged."
+                    appointments.remove(appointment)
+                    print(appointments)
+    
+    return render_template('manageBookedAppointments.html',
+        appointments=appointments,
+        success_message=success_message if 'success_message' in locals() else None)
 
 
 
@@ -1153,12 +1063,12 @@ def manage_emergency_rooms():
                             error = "Emergency room doesn't exist."
 
     return render_template('emergencyRooms(18).html',
-                           emergency_rooms=emergency_rooms,
-                           error=error,
-                           success_message=success_message,
-                           is_patient_valid=is_patient_valid,
-                           patient_to_assign=patient_to_assign,
-                           )
+        emergency_rooms=emergency_rooms,
+        error=error,
+        success_message=success_message,
+        is_patient_valid=is_patient_valid,
+        patient_to_assign=patient_to_assign,
+        )
 
 
 

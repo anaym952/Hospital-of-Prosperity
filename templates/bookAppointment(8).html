@@ -44,6 +44,7 @@
             <tbody>
                 {% if appointments %}
                     {% for appointment in appointments %}
+                    {% if appointment['status'] == 'Incomplete' %}
                     <tr>
                         <td>{{ appointment['doctor'] }}</td>
                         <td>
@@ -62,6 +63,7 @@
                             {% endif %}
                         </td>
                     </tr>
+                    {% endif %}
                     {% endfor %}
                 {% else %}
                 <tr>
