@@ -33,10 +33,9 @@
 
     <div class="form_container">
         <div class="form">
-            <form>
-                <label for="payment_type">Payment Type:</label>
-                <input type="radio">Prescription
-                <input type="radio">Appointment
+            <form method="POST">
+                <label for="payment_type">Payment ID:</label>
+                <input type="text" id="payment_id" name="payment_id" required>
                 <br>
                 <button class="button">Start Payment</button>
             </form>

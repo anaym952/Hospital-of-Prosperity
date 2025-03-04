@@ -428,8 +428,6 @@ def view_upcoming_appointments_patient():
 
 
 
-##################################### SHOW A TABLE OF PAYMENTS TO BE DONE, FIRST COLUMN HAS PAYMENT TYPE (APPOINTMENT, PRESCRIPTION, ETC.), SECOND HAS PAYMENT ID, THIRD HAS AMOUNT DUE, NO PAY BUTTON (THAT WILL BE DONE IN PROCESS PAYMENTS!)
-###################### FIX THE ERROR WHERE ANOTHER PATIENT'S PENDING PAYMENT SHOWS UP IN A DIFFERENT PATIENT'S ACCOUNT (ONLY THE LOGGED-IN PATIENT'S PENDING PAYMENTS SHOULD SHOW)
 @app.route('/patient/pending-payments', methods=['GET','POST'])
 def view_pending_payments():
     if session.get('user_role') != 'patient':
@@ -441,7 +439,6 @@ def view_pending_payments():
 
 
 
-#################################### FILL OUT IDEAS FOR THIS FUNCTION LATER (BUT THIS WILL NOT BE A TABLE BECAUSE IT NEEDS TO BE MORE FORMAL FOR OFFICIAL PAYMENTS)
 @app.route('/patient/payment-history', methods=['GET','POST'])
 def view_payment_history():
     if session.get('user_role') != 'patient':
@@ -497,12 +494,46 @@ def recieve_prescriptions():
 
 
 
+########################## THE PATIENT WILL BE ASKED TO ENTER PAYMENT ID & CLICK START PAYMENT,
+########################## IF THE PAYMENT ID IS VALID AND MATCHES THE NAME OF THE
+########################## LOGGED IN ACCOUNT, DISPLAY ALL PAYMENT DETAILS BELOW
+########################## AND HAVE ANOTHER BUTTON TO 'CONFIRM PAYMENT',
+########################## THEN PAYMENT IS GOING TO HISTORY AND AMOUNT IS DEDUCTED FROM P ACCOUNT
+# IN THE DETAILS, THERE WILL BE HOSPITAL NAME/LOGO, HOSPITAL ADDRESS, 
+# DATE OF PAYMENT (TODAY), PAYMENT ID, PATIENT NAME,
+# PATIENT PHONE NUMBER, PATIENT'S DR (IF NONE SAY 'N/A'), DR'S PHONE # (IF NONE SAY 'N/A')
 @app.route('/patient/process-payments', methods=['GET','POST'])
 def process_payments():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
-    
-    return render_template('processPayments(21).html')
+
+    if request.method == 'POST':
+        valid_paymend_id = False
+        payment_id = request.form.get('payment_id', '').strip()
+
+        for pending_payment in pending_payments:
+            if payment_id == pending_payment['payment_id']:
+                if (session.get('user_name').lower()).capitalize() != (pending_payment['patient_to_pay'].lower()).capitalize(): 
+                    error = f"Invalid payment ID."
+                    # Debug:
+                    print(error)
+                elif (session.get('user_name').lower()).capitalize() == (pending_payment['patient_to_pay'].lower()).capitalize():   
+                    valid_paymend_id = True
+                    # Debug:
+                    print(valid_paymend_id)
+        
+        if not any(payment_id == pending_payment['payment_id'] for pending_payment in pending_payments):
+            error = f"Wrong payment ID."
+            # Debug:
+            print(error)
+
+        # if valid_paymend_id:
+
+
+    return render_template('processPayments(21).html',
+        valid_paymend_id=valid_paymend_id if 'valid_paymend_id' in locals() else None,
+        error=error if 'error' in locals() else None
+        )
 
 
 
