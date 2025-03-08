@@ -498,9 +498,11 @@ def recieve_prescriptions():
 ########################## IF THE PAYMENT ID IS VALID AND MATCHES THE NAME OF THE
 ########################## LOGGED IN ACCOUNT, DISPLAY ALL PAYMENT DETAILS BELOW
 ########################## AND HAVE ANOTHER BUTTON TO 'CONFIRM PAYMENT',
-########################## THEN PAYMENT IS GOING TO HISTORY AND AMOUNT IS DEDUCTED FROM P ACCOUNT
+########################## THEN PAYMENT IS GOING TO HISTORY AND CHECK IF PATIENT HAS ENOUGH MONEY,
+########################## IF PATIENT DOES, DEDUCT AMOUNT FROM ACCOUNT, IF NOT, ERROR MESSAGE
 # IN THE DETAILS, THERE WILL BE HOSPITAL NAME/LOGO, HOSPITAL ADDRESS, 
 # DATE OF PAYMENT (TODAY), PAYMENT ID, PATIENT NAME,
+# PAYMENT TYPE, AMOUNT TO BE PAID,
 # PATIENT PHONE NUMBER, PATIENT'S DR (IF NONE SAY 'N/A'), DR'S PHONE # (IF NONE SAY 'N/A')
 @app.route('/patient/process-payments', methods=['GET','POST'])
 def process_payments():
@@ -527,10 +529,16 @@ def process_payments():
             # Debug:
             print(error)
 
-        # if valid_paymend_id:
+        if valid_paymend_id:
+            time.sleep(1)
+            # for pending_payment in pending_payments:
+            #     if payment_id == pending_payment['payment_id']:
 
 
     return render_template('processPayments(21).html',
+        hospital_address=hospital_address,
+        pending_payments=pending_payments,
+        today_date=datetime.now().strftime('%m/%d/%Y'),
         valid_paymend_id=valid_paymend_id if 'valid_paymend_id' in locals() else None,
         error=error if 'error' in locals() else None
         )

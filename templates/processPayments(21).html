@@ -31,6 +31,7 @@
         </div>
     </div>
 
+
     <div class="form_container">
         <div class="form">
             <form method="POST">
@@ -40,7 +41,78 @@
                 <button class="button">Start Payment</button>
             </form>
         </div>
+        {% if error %}
+        <p style="color: red; margin-top: 10px;">{{ error }}</p>
+        {% endif %}
+        {% if success_message %}
+        <p style="color: rgb(52, 183, 23); margin-top: 10px;">{{ success_message }}</p>
+        {% endif %}
     </div>
+
+
+    {% if valid_paymend_id %}
+        <div style="display: flex; margin-top: 20px; justify-content: center; gap: 200px; align-items: center; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">
+            <div>
+                <h2 style="color: red; text-decoration: underline;">Hospital of Prosperity</h2>
+            </div>
+            <div>
+                <h4>{{ hospital_address }}</h4>
+            </div>
+        </div>
+
+        {% for pending_payment in pending_payments %}
+            {% if payment_id == pending_payment['payment_id'] %}
+                
+                <div style="margin-top: 40px; align-items: center; justify-content: center; display: flex; flex-direction: column; gap: 20px;">
+                    
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <div>
+                            Payment Date: {{ today_date }}
+                        </div>
+                        <div>
+                            Payment ID: {{ pending_payment['payment_id'] }}
+                        </div>
+                        <div>
+                            Patient Name: {{ pending_payment['patient_to_pay'] }}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+                        <div>
+                            Payment For: {{ pending_payment['payment_type'] }} #{{ pending_payment['appointment_or_prescription_id'] }}
+                        </div>
+                        <div>
+                            Payment Amount: ${{ pending_payment['amount_due'] }}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+                        {% for patient in patient_accounts %}
+                        {% if patient['account_name'] == payment_type['patient_to_pay'] %}
+                            <div>
+                                Patient Phone Number: ({{ patient['phone_number'][0:3] }}) {{ patient['phone_number'][3:6] }}-{{ patient['phone_number'][6:10] }}
+                            </div>
+                            <div>
+                                Patient's Doctor: {{ patient['assigned_doctor'] }}
+                            </div>
+                            {% if patient['assigned_doctor'] != 'N/A' %}
+                            {% for doctor in doctor_accounts %}
+                            {% if doctor['account_name'] == patient['assigned_doctor'] %}
+                            <div>
+                                Doctor Phone Number: ({{ doctor['phone_number'][0:3] }}) {{ doctor['phone_number'][3:6] }}-{{ doctor['phone_number'][6:10] }}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
     <div class="footer_container">
         <div class="footer">
