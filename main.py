@@ -508,10 +508,10 @@ def recieve_prescriptions():
 def process_payments():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
-
+    
     if request.method == 'POST':
         valid_paymend_id = False
-        payment_id = request.form.get('payment_id', '').strip()
+        payment_id = str(request.form.get('payment_id', '')).strip()
 
         for pending_payment in pending_payments:
             if payment_id == pending_payment['payment_id']:
@@ -538,7 +538,9 @@ def process_payments():
     return render_template('processPayments(21).html',
         hospital_address=hospital_address,
         pending_payments=pending_payments,
+        patient_accounts=patient_accounts,
         today_date=datetime.now().strftime('%m/%d/%Y'),
+        payment_id=payment_id if 'payment_id' in locals() else None,
         valid_paymend_id=valid_paymend_id if 'valid_paymend_id' in locals() else None,
         error=error if 'error' in locals() else None
         )

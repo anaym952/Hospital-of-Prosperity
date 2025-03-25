@@ -35,10 +35,10 @@
     <div class="form_container">
         <div class="form">
             <form method="POST">
-                <label for="payment_type">Payment ID:</label>
+                <label for="payment_id">Payment ID:</label>
                 <input type="text" id="payment_id" name="payment_id" required>
                 <br>
-                <button class="button">Start Payment</button>
+                <button type="submit" class="button">Start Payment</button>
             </form>
         </div>
         {% if error %}
@@ -65,7 +65,7 @@
                 
                 <div style="margin-top: 40px; align-items: center; justify-content: center; display: flex; flex-direction: column; gap: 20px;">
                     
-                    <div style="display: flex; justify-content: center; align-items: center;">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
                         <div>
                             Payment Date: {{ today_date }}
                         </div>
@@ -88,7 +88,7 @@
 
                     <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
                         {% for patient in patient_accounts %}
-                        {% if patient['account_name'] == payment_type['patient_to_pay'] %}
+                        {% if patient['account_name'] == pending_payment['patient_to_pay'] %}
                             <div>
                                 Patient Phone Number: ({{ patient['phone_number'][0:3] }}) {{ patient['phone_number'][3:6] }}-{{ patient['phone_number'][6:10] }}
                             </div>
@@ -96,13 +96,17 @@
                                 Patient's Doctor: {{ patient['assigned_doctor'] }}
                             </div>
                             {% if patient['assigned_doctor'] != 'N/A' %}
-                            {% for doctor in doctor_accounts %}
-                            {% if doctor['account_name'] == patient['assigned_doctor'] %}
+                                {% for doctor in doctor_accounts %}
+                                {% if doctor['account_name'] == patient['assigned_doctor'] %}
+                                <div>
+                                    Doctor Phone Number: ({{ doctor['phone_number'][0:3] }}) {{ doctor['phone_number'][3:6] }}-{{ doctor['phone_number'][6:10] }}
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            {% else %}
                             <div>
-                                Doctor Phone Number: ({{ doctor['phone_number'][0:3] }}) {{ doctor['phone_number'][3:6] }}-{{ doctor['phone_number'][6:10] }}
+                                Doctor Phone Number: N/A
                             </div>
-                            {% endif %}
-                            {% endfor %}
                             {% endif %}
                         {% endif %}
                         {% endfor %}
