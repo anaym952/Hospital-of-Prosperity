@@ -13,25 +13,7 @@
 
 <body>
 
-    <div class="navbar">
-        <div class="icon">
-            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
-        </div>
-        <div class="options">
-            <ul>
-                <a href="{{url_for('view_all_accounts')}}"><li>View All Accounts</li></a>
-                <a href="{{url_for('manage_doctor_availability')}}"><li>Manage Doctor Availability</li></a>
-                <a href="{{url_for('assign_patient_to_doctor')}}">Assign Patient to Doctor</a>
-                <a href="{{url_for('manage_booked_appointments')}}">Manage Booked Appointments</a>
-                <a href="{{url_for('add_to_inventory')}}"><li>Add to Inventory</li></a>
-                <a href="{{url_for('update_inventory')}}"><li>Update Inventory</li></a>
-                <a href="{{url_for('view_inventory')}}"><li>View Inventory</li></a>
-                <a href="{{url_for('manage_emergency_rooms')}}"><li>Manage Emergency Rooms</li></a>
-                <a href="{{url_for('logout')}}"><li>Logout</li></a>
-            </ul>
-        </div>
-    </div>
-
+    {% include 'adminNavbar.html' %}
 
     <div class="container mt-5">
         <table class="table table-striped table-bordered">
@@ -80,15 +62,7 @@
         {% endif %}
     </div>
 
-    
-    <div class="footer_container">
-        <div class="footer">
-            <ul>
-                <li>Email Us: bossmode2566@gmail.com</li>
-                <li>Phone Number: (Provided Upon Request)</li>
-            </ul>
-        </div>
-    </div>
+    {% include 'footer.html' %}
     
 </body>
 

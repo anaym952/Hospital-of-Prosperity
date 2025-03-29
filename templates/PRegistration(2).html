@@ -10,20 +10,7 @@
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="icon">
-            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
-        </div>
-        <div class="options">
-            <ul>
-                <a href="{{url_for('register_patient')}}"><li>Register Patient</li></a>
-                <a href="{{url_for('patient_login')}}"><li>Patient Login</li></a>
-                <a href="{{url_for('register_doctor')}}"><li>Register Doctor</li></a>
-                <a href="{{url_for('doctor_login')}}"><li>Doctor Login</li></a>
-                <a href="{{url_for('admin_login')}}"><li>Admin Login</li></a>
-            </ul>
-        </div>
-    </div>
+    {% include 'homeNavbar.html' %}
 
     <div class="form_container">
         <div class="form">
@@ -65,12 +52,7 @@
         </div>
     </div>
 
-    <div class="footer">
-        <ul>
-            <li>Email Us: bossmode2566@gmail.com</li>
-            <li>Phone Number: (Provided Upon Request)</li>
-        </ul>
-    </div>
+    {% include 'footer.html' %}
 
 </body>
 </html>

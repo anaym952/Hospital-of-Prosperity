@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+    
+    <div class="navbar">
+        <div class="icon">
+            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
+        </div>
+        <div class="options">
+            <ul>
+                <a href="{{url_for('send_availability')}}"><li>Manage Availability</li></a>
+                <a href="{{url_for('view_upcoming_appointments_doctor')}}"><li>View Upcoming Appointments</li></a>
+                <a href="{{url_for('issue_prescriptions')}}"><li>Issue Prescriptions</li></a>
+                <a href="{{url_for('add_patient_records')}}"><li>Add Patients' Records</li></a>
+                <a href="{{url_for('view_patient_records')}}"><li>View Patients' Records</li></a>
+                <a href="{{url_for('logout')}}"><li>Logout</li></a>
+            </ul>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -38,40 +38,24 @@
             margin: 20px;
         }
 
-        .button {
+        #mda {
             background-color: #007bff;
-            color: white;
             border: none;
             padding: 5px 10px;
             cursor: pointer;
             border-radius: 5px;
         }
 
-        .button:hover {
-            background-color: #0056b3;
+        #mda:hover {
+            transition: 0.3s;
+            transform: scale(1.1);;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="icon">
-            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
-        </div>
-        <div class="options">
-            <ul>
-                <a href="{{url_for('view_all_accounts')}}"><li>View All Accounts</li></a>
-                <a href="{{url_for('manage_doctor_availability')}}"><li>Manage Doctor Availability</li></a>
-                <a href="{{url_for('assign_patient_to_doctor')}}">Assign Patient to Doctor</a>
-                <a href="{{url_for('manage_booked_appointments')}}">Manage Booked Appointments</a>
-                <a href="{{url_for('add_to_inventory')}}"><li>Add to Inventory</li></a>
-                <a href="{{url_for('update_inventory')}}"><li>Update Inventory</li></a>
-                <a href="{{url_for('view_inventory')}}"><li>View Inventory</li></a>
-                <a href="{{url_for('manage_emergency_rooms')}}"><li>Manage Emergency Rooms</li></a>
-                <a href="{{url_for('logout')}}"><li>Logout</li></a>
-            </ul>
-        </div>
-    </div>
+    
+    {% include 'adminNavbar.html' %}
 
     <div class="container mt-5">
         {% if error %}
@@ -113,7 +97,7 @@
                         {% if count < 3 %}
                             <form method='POST' action="{{ url_for('manage_doctor_availability') }}">
                                 <input type="hidden" name="timing" value="{{ timing }}">
-                                <button type="submit" class="button">Assign</button>
+                                <button type="submit" class="button" id="button_mda">Assign</button>
                             </form>
                         {% else %}
                             Max Assigned
@@ -125,13 +109,7 @@
         </table>
     </div>
 
-    <div class="footer_container">
-        <div class="footer">
-            <ul>
-                <li>Email Us: bossmode2566@gmail.com</li>
-                <li>Phone Number: (Provided Upon Request)</li>
-            </ul>
-        </div>
-    </div>
+    {% include 'footer.html' %}
+    
 </body>
 </html>

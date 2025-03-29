@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+    
+    <div class="navbar">
+        <div class="icon">
+            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
+            <h2>Hospital of Prosperity</h2>
+        </div>
+        <div class="options">
+            <ul>
+                <a href="{{url_for('register_patient')}}"><li>Register Patient</li></a>
+                <a href="{{url_for('patient_login')}}"><li>Patient Login</li></a>
+                <a href="{{url_for('register_doctor')}}"><li>Register Doctor</li></a>
+                <a href="{{url_for('doctor_login')}}"><li>Doctor Login</li></a>
+                <a href="{{url_for('admin_login')}}"><li>Admin Login</li></a>
+            </ul>
+        </div>
+    </div>
+
+</body>
+
+</html>

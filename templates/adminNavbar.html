@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+    
+    <div class="navbar">
+        <div class="icon">
+            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
+        </div>
+        <div class="options">
+            <ul>
+                <a href="{{url_for('view_all_accounts')}}"><li>View All Accounts</li></a>
+                <a href="{{url_for('manage_doctor_availability')}}"><li>Manage Doctor Availability</li></a>
+                <a href="{{url_for('assign_patient_to_doctor')}}">Assign Patient to Doctor</a>
+                <a href="{{url_for('manage_booked_appointments')}}">Manage Booked Appointments</a>
+                <a href="{{url_for('add_to_inventory')}}"><li>Add to Inventory</li></a>
+                <a href="{{url_for('update_inventory')}}"><li>Update Inventory</li></a>
+                <a href="{{url_for('view_inventory')}}"><li>View Inventory</li></a>
+                <a href="{{url_for('manage_emergency_rooms')}}"><li>Manage Emergency Rooms</li></a>
+                <a href="{{url_for('logout')}}"><li>Logout</li></a>
+            </ul>
+        </div>
+    </div>
+
+</body>
+
+</html>
