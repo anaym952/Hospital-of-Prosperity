@@ -504,45 +504,92 @@ def recieve_prescriptions():
 # DATE OF PAYMENT (TODAY), PAYMENT ID, PATIENT NAME,
 # PAYMENT TYPE, AMOUNT TO BE PAID,
 # PATIENT PHONE NUMBER, PATIENT'S DR (IF NONE SAY 'N/A'), DR'S PHONE # (IF NONE SAY 'N/A')
+
+######## FIX ISSUE WITH ERROR MESSAGE,
+######## "INVALID PAYMENT ID", SHOWING EVEN WHEN CLICKING CONFIRM PAYMENT (2ND BUTTON)
 @app.route('/patient/process-payments', methods=['GET','POST'])
 def process_payments():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
+    payment_id = None
+
     if request.method == 'POST':
-        valid_paymend_id = False
+        valid_paymend_id = True
         payment_id = str(request.form.get('payment_id', '')).strip()
 
         for pending_payment in pending_payments:
+            ### check if payment id is correct
             if payment_id == pending_payment['payment_id']:
+                ### if the payment id is correct but doesn't belong to the logged-in user
                 if (session.get('user_name').lower()).capitalize() != (pending_payment['patient_to_pay'].lower()).capitalize(): 
-                    error = f"Invalid payment ID."
+                    valid_paymend_id = False
+                    error = f"Wrong payment ID."
                     # Debug:
                     print(error)
+
+                ### if payment id is valid, we need to make sure that patient has enough money to pay
                 elif (session.get('user_name').lower()).capitalize() == (pending_payment['patient_to_pay'].lower()).capitalize():   
-                    valid_paymend_id = True
-                    # Debug:
-                    print(valid_paymend_id)
-        
+                    for patient in patient_accounts:
+                        if (session.get('user_name').lower()).capitalize() == patient['account_name']:
+                            
+                            ### if everything is valid (payment ID & patient balance)
+                            if patient['balance'] >= pending_payment['amount_due']:
+                                payment_to_remove = pending_payment
+                                patient_to_charge = patient
+                                # Debug:
+                                print(valid_paymend_id)
+                            
+                            ### if patient doesn't have enough money to pay bill
+                            else:
+                                valid_paymend_id = False
+                                amount_short = float(pending_payment['amount_due']) - float(patient['balance'])
+                                error = f"You need ${amount_short} more to pay the bill for {pending_payment['payment_type']} {pending_payment['appointment_or_prescription_id']}."
+                                print(error)
+
+
+        ### if payment ID doesn't exist at all currently
         if not any(payment_id == pending_payment['payment_id'] for pending_payment in pending_payments):
-            error = f"Wrong payment ID."
+            valid_paymend_id = False
+            error = f"Invalid payment ID."
             # Debug:
             print(error)
 
         if valid_paymend_id:
             time.sleep(1)
-            # for pending_payment in pending_payments:
-            #     if payment_id == pending_payment['payment_id']:
+            payment_confirmed = request.form.get('payment_confirmed', '').strip()
 
+            if payment_confirmed:
+                time.sleep(1)
+                patient_to_charge['balance'] -= payment_to_remove['amount_due']
+                # Debug:
+                print(patient_accounts)
+                pending_payments.remove(payment_to_remove)
+                # Debug:
+                print(pending_payments)
+                today_date=datetime.now().strftime('%m/%d/%Y')
+                completed_payment = {
+                    'patient': session.get('user_name'),
+                    'amount_paid': payment_to_remove['amount_due'],
+                    'payment_for': f"{payment_to_remove['payment_type']} {payment_to_remove['appointment_or_prescription_id']}",
+                    'date': today_date
+                }
+                payment_history.append(completed_payment)
+                # Debug:
+                print(payment_history)
+                success_message = f"You have successfully paid ${payment_to_remove['amount_due']} for {payment_to_remove['payment_type']} {payment_to_remove['appointment_or_prescription_id']}, {session.get('user_name')}!"
 
     return render_template('processPayments(21).html',
         hospital_address=hospital_address,
         pending_payments=pending_payments,
         patient_accounts=patient_accounts,
         today_date=datetime.now().strftime('%m/%d/%Y'),
-        payment_id=payment_id if 'payment_id' in locals() else None,
+        payment_to_remove=payment_to_remove if 'payment_to_remove' in locals() else None,
+        patient_to_charge=patient_to_charge if 'patient_to_charge' in locals() else None,
+        payment_id=payment_id,
         valid_paymend_id=valid_paymend_id if 'valid_paymend_id' in locals() else None,
-        error=error if 'error' in locals() else None
+        error=error if 'error' in locals() else None,
+        success_message=success_message if 'success_message' in locals() else None
         )
 
 
