@@ -99,37 +99,37 @@ def register_patient():
         password = request.form.get('password', '').strip()
 
         if not all([account_name, age, gender, phone_number, medical_history, height, weight, initial_deposit, password]):
-            return render_template('PRegistration(2).html', error="All fields are required!")
+            return render_template('PRegistration.html', error="All fields are required!")
        
         if any(patient['account_name'] == account_name for patient in patient_accounts):
-            return render_template('PRegistration(2).html', error="Account name already exists.")
+            return render_template('PRegistration.html', error="Account name already exists.")
        
         if account_name.startswith("Dr.") or any(char.isdigit() for char in account_name):
-            return render_template('PRegistration(2).html', error="Patients' names can't start with 'Dr.' or contain digits.")
+            return render_template('PRegistration.html', error="Patients' names can't start with 'Dr.' or contain digits.")
        
         try:
             age = int(age)
             initial_deposit = float(initial_deposit)
         except ValueError:
-            return render_template('PRegistration(2).html', error="Age must be an integer and Initial Deposit must be a number.")
+            return render_template('PRegistration.html', error="Age must be an integer and Initial Deposit must be a number.")
 
         if age < 0 or age > 130:
-            return render_template('PRegistration(2).html', error="Invalid age.")
+            return render_template('PRegistration.html', error="Invalid age.")
        
         if len(phone_number) != 10 or not phone_number.isdigit():
-            return render_template('PRegistration(2).html', error="Phone number must contain exactly 10 digits.")
+            return render_template('PRegistration.html', error="Phone number must contain exactly 10 digits.")
         
         if not(30 <= int(height) <= 275):
-            return render_template('PRegistration(2).html', error="Invalid height.")
+            return render_template('PRegistration.html', error="Invalid height.")
         
         if not(20 <= int(weight) <= 1000):
-            return render_template('PRegistration(2).html', error="Invalid weight.")
+            return render_template('PRegistration.html', error="Invalid weight.")
 
         if initial_deposit < 0:
-            return render_template('PRegistration(2).html', error="Initial deposit must be 0 or greater.")
+            return render_template('PRegistration.html', error="Initial deposit must be 0 or greater.")
        
         if len(password) < 5 or not any(char.isalpha() for char in password):
-            return render_template('PRegistration(2).html', error="Password must contain at least one alphabetical character and be 5+ characters long.")
+            return render_template('PRegistration.html', error="Password must contain at least one alphabetical character and be 5+ characters long.")
 
         hashed_password = generate_password_hash(password)
        
@@ -152,7 +152,7 @@ def register_patient():
        
         return redirect(url_for('home'))
    
-    return render_template('PRegistration(2).html')
+    return render_template('PRegistration.html')
 
 
 
@@ -196,33 +196,33 @@ def register_doctor():
         print(f"Authentication: '{authentication}', Account Name: '{account_name}', Age: '{age}', Gender: '{gender}', Phone Number: '{phone_number}', Password: '{password}'")
 
         if not all([authentication, account_name, specialization, age, gender, phone_number, password]):
-            return render_template('DRegistration(3).html', error="All fields are required!")
+            return render_template('DRegistration.html', error="All fields are required!")
 
         if not authentication.isdigit():
-            return render_template('DRegistration(3).html', error="Authentication must be a numeric value.")
+            return render_template('DRegistration.html', error="Authentication must be a numeric value.")
         elif int(authentication) < 6:
-            return render_template('DRegistration(3).html', error="You must have 6+ years of experience as a doctor.")
+            return render_template('DRegistration.html', error="You must have 6+ years of experience as a doctor.")
         
         print(f"{account_name}")
 
         if any(doctor['account_name'] == account_name for doctor in doctor_accounts):
-            return render_template('DRegistration(3).html', error="Account name already exists.")
+            return render_template('DRegistration.html', error="Account name already exists.")
         elif not account_name.startswith('Dr. ') or any(char.isdigit() for char in account_name):
-            return render_template('DRegistration(3).html', error="Doctors' account names must start with 'Dr. ' and can't contain a digit.")
+            return render_template('DRegistration.html', error="Doctors' account names must start with 'Dr. ' and can't contain a digit.")
         
         if not specialization:
-            return render_template('DRegistration(3).html', error="Please specify your field of specialization.")
+            return render_template('DRegistration.html', error="Please specify your field of specialization.")
         
         if int(age) < 30 or int(age) >= 80:
-            return render_template('DRegistration(3).html', error="You must be between ages 30 and 80 to work here!")
+            return render_template('DRegistration.html', error="You must be between ages 30 and 80 to work here!")
 
         if len(phone_number) != 10:
-            return render_template('DRegistration(3).html', error="Phone number must contain 10 digits.")
+            return render_template('DRegistration.html', error="Phone number must contain 10 digits.")
                 
         if not any(char.isalpha() for char in password) or len(password) < 5:
-            return render_template('DRegistration(3).html', error="Password must contain at least one alphabetical character and be 5+ characters in length.")
+            return render_template('DRegistration.html', error="Password must contain at least one alphabetical character and be 5+ characters in length.")
         elif any(password == doctor['password'] for doctor in doctor_accounts):
-            return render_template('DRegistration(3).html', error="Invalid password; please choose another password.")
+            return render_template('DRegistration.html', error="Invalid password; please choose another password.")
 
         hashed_password = generate_password_hash(password)
 
@@ -239,7 +239,7 @@ def register_doctor():
 
         return redirect(url_for('home'))
     
-    return render_template('DRegistration(3).html')
+    return render_template('DRegistration.html')
 
 
 
@@ -337,13 +337,13 @@ def deposit_money():
                     patient['balance'] += rounded_deposited_money
                     time.sleep(1)
                     print(f"Account Name: '{account_name}', Balance: '{patient['balance']}'")
-                    return render_template('depositMoney(4).html', success_message=f"You have successfully deposited ${rounded_deposited_money:.2f} into your account, {account_name}.")
+                    return render_template('depositMoney.html', success_message=f"You have successfully deposited ${rounded_deposited_money:.2f} into your account, {account_name}.")
                 else:
-                    return render_template('depositMoney(4).html', error="Invalid deposit amount.")
+                    return render_template('depositMoney.html', error="Invalid deposit amount.")
                 
-        return render_template('depositMoney(4).html', error="Account not found.")
+        return render_template('depositMoney.html', error="Account not found.")
             
-    return render_template('depositMoney(4).html')
+    return render_template('depositMoney.html')
 
 
 
@@ -364,15 +364,15 @@ def withdraw_money():
                         patient['balance'] -= rounded_withdrawn_money
                         time.sleep(1)
                         print(f"Account Name: '{account_name}', Balance: '{patient['balance']}'")
-                        return render_template('withdrawMoney(5).html', success_message=f"You have successfully withdrawn ${rounded_withdrawn_money:.2f} from your account, {account_name}.")
+                        return render_template('withdrawMoney.html', success_message=f"You have successfully withdrawn ${rounded_withdrawn_money:.2f} from your account, {account_name}.")
                     else:
-                        return render_template('withdrawMoney(5).html', error=f"Not enough money in your account to withdraw ${rounded_withdrawn_money:.2f}.")
+                        return render_template('withdrawMoney.html', error=f"Not enough money in your account to withdraw ${rounded_withdrawn_money:.2f}.")
                 else:
-                    return render_template('withdrawMoney(5).html', error="Invalid withdrawl amount.")
+                    return render_template('withdrawMoney.html', error="Invalid withdrawl amount.")
                 
-        return render_template('withdrawMoney(5).html', error="Account not found.")
+        return render_template('withdrawMoney.html', error="Account not found.")
             
-    return render_template('withdrawMoney(5).html')
+    return render_template('withdrawMoney.html')
 
 
 
@@ -408,7 +408,7 @@ def book_appointment():
         print(f"Appointments after booking attempt: {appointments}")
 
     return render_template(
-        'bookAppointment(8).html',
+        'bookAppointment.html',
         appointments=appointments,
         error=error if 'error' in locals() else None,
         success_message=success_message if 'success_message' in locals() else None
@@ -424,7 +424,7 @@ def view_upcoming_appointments_patient():
     current_user = session.get('user_name')
     user_appointments = [appointment for appointment in appointments if appointment['patient'] == current_user and appointment['status'] == "Incomplete"]
     
-    return render_template('viewUpcomingAppointmentsPatient(9).html', appointments=user_appointments)
+    return render_template('viewUpcomingAppointmentsPatient.html', appointments=user_appointments)
 
 
 
@@ -433,7 +433,7 @@ def view_pending_payments():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
-    return render_template('viewPendingPayments(16).html',
+    return render_template('viewPendingPayments.html',
         pending_payments=pending_payments,
         patient_logged_in=session.get('user_name'))
 
@@ -444,7 +444,7 @@ def view_payment_history():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
-    return render_template('viewPaymentHistory(17).html')
+    return render_template('viewPaymentHistory.html')
 
 
 
@@ -481,7 +481,7 @@ def recieve_prescriptions():
         if not prescription_ready:
             error = f"Incorrect prescription ID or wrong patient."
     
-    return render_template('recievePrescription(20).html',
+    return render_template('recievePrescription.html',
         error=error if 'error' in locals() else None,
         prescription_ready=prescription_ready if 'prescription_ready' in locals() else None,
         hospital_address=hospital_address,
@@ -511,12 +511,11 @@ def recieve_prescriptions():
 def process_payments():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
-    
-    payment_id = None
 
     if request.method == 'POST':
         valid_paymend_id = True
         payment_id = str(request.form.get('payment_id', '')).strip()
+        print(payment_id)
 
         for pending_payment in pending_payments:
             ### check if payment id is correct
@@ -527,6 +526,7 @@ def process_payments():
                     error = f"Wrong payment ID."
                     # Debug:
                     print(error)
+                    print(valid_paymend_id)
 
                 ### if payment id is valid, we need to make sure that patient has enough money to pay
                 elif (session.get('user_name').lower()).capitalize() == (pending_payment['patient_to_pay'].lower()).capitalize():   
@@ -546,14 +546,22 @@ def process_payments():
                                 amount_short = float(pending_payment['amount_due']) - float(patient['balance'])
                                 error = f"You need ${amount_short} more to pay the bill for {pending_payment['payment_type']} {pending_payment['appointment_or_prescription_id']}."
                                 print(error)
+                                print(valid_paymend_id)
 
+        # Debug:
+        print(valid_paymend_id)
+        print(payment_id)
 
         ### if payment ID doesn't exist at all currently
+        payment_id=payment_id
         if not any(payment_id == pending_payment['payment_id'] for pending_payment in pending_payments):
             valid_paymend_id = False
             error = f"Invalid payment ID."
             # Debug:
+            print(payment_id, type(payment_id))
+            print(pending_payment['payment_id'], type(pending_payment['payment_id']))
             print(error)
+            print(valid_paymend_id)
 
         if valid_paymend_id:
             time.sleep(1)
@@ -579,14 +587,14 @@ def process_payments():
                 print(payment_history)
                 success_message = f"You have successfully paid ${payment_to_remove['amount_due']} for {payment_to_remove['payment_type']} {payment_to_remove['appointment_or_prescription_id']}, {session.get('user_name')}!"
 
-    return render_template('processPayments(21).html',
+    return render_template('processPayments.html',
         hospital_address=hospital_address,
         pending_payments=pending_payments,
         patient_accounts=patient_accounts,
         today_date=datetime.now().strftime('%m/%d/%Y'),
         payment_to_remove=payment_to_remove if 'payment_to_remove' in locals() else None,
         patient_to_charge=patient_to_charge if 'patient_to_charge' in locals() else None,
-        payment_id=payment_id,
+        payment_id=payment_id if 'payment_id' in locals() else None,
         valid_paymend_id=valid_paymend_id if 'valid_paymend_id' in locals() else None,
         error=error if 'error' in locals() else None,
         success_message=success_message if 'success_message' in locals() else None
@@ -599,7 +607,7 @@ def view_patient_portal():
     if session.get('user_role') != 'patient':
         return redirect(url_for('patient_login'))
     
-    return render_template('viewPatientPortal(22).html', patients=patient_accounts)
+    return render_template('viewPatientPortal.html', patients=patient_accounts)
 
 
 
@@ -623,11 +631,11 @@ def send_availability():
         available_timings = request.form.getlist('available_timings')
 
         if not available_timings:
-            return render_template('doctorAvailability(6).html', error="Please select at least one slot.")
+            return render_template('doctorAvailability.html', error="Please select at least one slot.")
         
         if any(session['user_name'] == doctor['name'] for doctor in available_times_list if len(available_times_list) > 0):
             print(available_times_list)
-            return render_template('doctorAvailability(6).html', error="Your availability for tomorrow has already been added.")
+            return render_template('doctorAvailability.html', error="Your availability for tomorrow has already been added.")
             
         doctor_availability = {'name': session['user_name']}
         for timing in available_timings:
@@ -635,9 +643,9 @@ def send_availability():
         available_times_list.append(doctor_availability)
         print(available_times_list)
 
-        return render_template('doctorAvailability(6).html', success_message="Availability for tomorrow updated successfully.")
+        return render_template('doctorAvailability.html', success_message="Availability for tomorrow updated successfully.")
 
-    return render_template('doctorAvailability(6).html')
+    return render_template('doctorAvailability.html')
 
 
 
@@ -649,7 +657,7 @@ def view_upcoming_appointments_doctor():
     current_user = session.get('user_name')
     user_appointments = [appointment for appointment in appointments if appointment['doctor'] == current_user and appointment['patient'] != 'None' and appointment['status'] == "Incomplete"]
     
-    return render_template('viewUpcomingAppointmentsDoctor(9).html', appointments=user_appointments)
+    return render_template('viewUpcomingAppointmentsDoctor.html', appointments=user_appointments)
 
 
 
@@ -817,7 +825,7 @@ def add_patient_records():
             success_message = f"You have successfully added the medical record for {p_name.capitalize()}."
             print(patients_records)
 
-    return render_template('addPatientsRecords(11).html',
+    return render_template('addPatientsRecords.html',
         error=error if 'error' in locals() else None,
         success_message=success_message if 'success_message' in locals() else None
         )
@@ -852,7 +860,7 @@ def view_patient_records():
             valid_record_to_view = False
 
     return render_template(
-        'viewPatientsRecords(12).html',
+        'viewPatientsRecords.html',
         hospital_address=hospital_address,
         patient_to_view=patient_to_view if 'patient_to_view' in locals() else None,
         valid_record_to_view=valid_record_to_view if 'valid_record_to_view' in locals() else None,
@@ -882,15 +890,15 @@ def view_all_accounts():
         account_type = request.form.get('account_type', '').strip()
 
         if not account_type:
-            return render_template('viewAccounts(1).html', error="Account type must be chosen.")
+            return render_template('viewAccounts.html', error="Account type must be chosen.")
        
         if account_type == 'Patients':
-            return render_template('viewAccounts(1).html', account_type="patient", patients=patient_accounts)
+            return render_template('viewAccounts.html', account_type="patient", patients=patient_accounts)
        
         elif account_type == 'Doctors':
-            return render_template('viewAccounts(1).html', account_type="doctor", doctors=doctor_accounts)
+            return render_template('viewAccounts.html', account_type="doctor", doctors=doctor_accounts)
    
-    return render_template('viewAccounts(1).html')
+    return render_template('viewAccounts.html')
 
 
 
@@ -946,13 +954,13 @@ def assign_patient_to_doctor():
         patient = next((p for p in patient_accounts if p['account_name'].capitalize() == patient_name.capitalize()), None)
 
         if not patient:
-            return render_template('assignPatient(7).html', error="Patient not found.", patients=patient_accounts)
+            return render_template('assignPatient.html', error="Patient not found.", patients=patient_accounts)
        
         if not doctor_accounts:
-            return render_template('assignPatient(7).html', error="No doctors have been registered yet.", patients=patient_accounts)
+            return render_template('assignPatient.html', error="No doctors have been registered yet.", patients=patient_accounts)
 
         if patient['assigned_doctor'] != "N/A":
-            return render_template('assignPatient(7).html', error="Patient has already been assigned to a doctor.", patients=patient_accounts)
+            return render_template('assignPatient.html', error="Patient has already been assigned to a doctor.", patients=patient_accounts)
 
         doctor_to_assign = random.choice(doctor_accounts)
         patient['assigned_doctor'] = doctor_to_assign['account_name']
@@ -960,9 +968,9 @@ def assign_patient_to_doctor():
         print(f"{patient['account_name']} has been assigned to {doctor_to_assign['account_name']}.")
 
         success_message = f"{patient['account_name']} has been assigned to {doctor_to_assign['account_name']}."
-        return render_template('assignPatient(7).html', success_message=success_message, patients=patient_accounts)
+        return render_template('assignPatient.html', success_message=success_message, patients=patient_accounts)
 
-    return render_template('assignPatient(7).html', patients=patient_accounts)
+    return render_template('assignPatient.html', patients=patient_accounts)
 
 
 
@@ -1018,16 +1026,16 @@ def add_to_inventory():
         time.sleep(1)
 
         if not all([new_med_name, med_status, med_quantity]):
-            return render_template('addToInventory(13).html', error="All medicine properties are required!")
+            return render_template('addToInventory.html', error="All medicine properties are required!")
         
         if any(new_med_name.capitalize() == medicine['med_name'] for medicine in inventory):
-            return render_template('addToInventory(13).html', error="Only new medicines can be added to inventory. To update an existing medicine, go to 'Update Inventory'.")
+            return render_template('addToInventory.html', error="Only new medicines can be added to inventory. To update an existing medicine, go to 'Update Inventory'.")
        
         if not med_quantity.isnumeric():
-            return render_template('addToInventory(13).html', error="Medicine quantity must be a positive integer.")
+            return render_template('addToInventory.html', error="Medicine quantity must be a positive integer.")
         
         if int(med_quantity) <= 0 or int(med_quantity) > 100:
-            return render_template('addToInventory(13).html', error="Invalid medicine quantity.")
+            return render_template('addToInventory.html', error="Invalid medicine quantity.")
         
         new_med_data = {
             'med_name': new_med_name.capitalize(),
@@ -1036,9 +1044,9 @@ def add_to_inventory():
         }
         inventory.append(new_med_data)
         print(inventory)
-        return render_template('addToInventory(13).html', success_message=f"{new_med_name.capitalize()} has been successfully added to the inventory!")
+        return render_template('addToInventory.html', success_message=f"{new_med_name.capitalize()} has been successfully added to the inventory!")
 
-    return render_template('addToInventory(13).html')
+    return render_template('addToInventory.html')
 
 
 
@@ -1055,22 +1063,22 @@ def update_inventory():
         time.sleep(1)
     
         if not all([med_name, new_med_status, new_med_quantity]):
-            return render_template('updateInventory(14).html', error="All medicine properties are required!")
+            return render_template('updateInventory.html', error="All medicine properties are required!")
     
         if all(med_name.capitalize() != medicine['med_name'] for medicine in inventory):
-            return render_template('updateInventory(14).html', error="Medicine not found in inventory. To add new medicines, go to 'Add to Inventory'.")
+            return render_template('updateInventory.html', error="Medicine not found in inventory. To add new medicines, go to 'Add to Inventory'.")
 
         if not new_med_quantity.isnumeric() or int(new_med_quantity) < 0:
-            return render_template('addToInventory(13).html', error="Medicine quantity must be a positive integer.")
+            return render_template('updateInventory.html', error="Medicine quantity must be a positive integer.")
         
         for medicine in inventory:
             if med_name.capitalize() == medicine['med_name']:
                 medicine['med_status'] = new_med_status
                 medicine['med_quantity'] = new_med_quantity
                 print(inventory)
-                return render_template('updateInventory(14).html', success_message=f"{med_name.capitalize()} has been successfully updated.")
+                return render_template('updateInventory.html', success_message=f"{med_name.capitalize()} has been successfully updated.")
 
-    return render_template('updateInventory(14).html')
+    return render_template('updateInventory.html')
 
 
 
@@ -1079,7 +1087,7 @@ def view_inventory():
     if session.get('user_role') != 'admin':
         return redirect(url_for('admin_login'))
     
-    return render_template('viewInventory(15).html', med_inventory=inventory)
+    return render_template('viewInventory.html', med_inventory=inventory)
 
 
 
@@ -1150,7 +1158,7 @@ def manage_emergency_rooms():
                         else:
                             error = "Emergency room doesn't exist."
 
-    return render_template('emergencyRooms(18).html',
+    return render_template('emergencyRooms.html',
         emergency_rooms=emergency_rooms,
         error=error,
         success_message=success_message,

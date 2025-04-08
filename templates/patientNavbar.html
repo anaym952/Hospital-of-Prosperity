@@ -5,27 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <link rel="stylesheet" href="/static/style.css">
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="/static/favicon.png">
 </head>
 
 <body>
     
     <div class="navbar">
         <div class="icon">
-            <a href="{{url_for('home')}}"><i class='bx bx-shield-plus'></i></a>
+            <a href="{{url_for('patient_home')}}"><i class='bx bx-shield-plus'></i></a>
         </div>
         <div class="options">
             <ul>
-                <a href="{{url_for('deposit_money')}}"><li>Deposit Money</li></a>
-                <a href="{{url_for('withdraw_money')}}"><li>Withdraw Money</li></a>
-                <a href="{{url_for('book_appointment')}}"><li>Book Appointment</li></a>
-                <a href="{{url_for('view_upcoming_appointments_patient')}}">View Upcoming Appointments</a>
-                <a href="{{url_for('view_pending_payments')}}"><li>Pending Payments</li></a>
-                <a href="{{url_for('view_payment_history')}}"><li>Payment History</li></a>
-                <a href="{{url_for('recieve_prescriptions')}}"><li>Prescriptions</li></a>
-                <a href="{{url_for('process_payments')}}"><li>Process Payments</li></a>
-                <a href="{{url_for('view_patient_portal')}}"><li>Patient Portal</li></a>
-                <a href="{{url_for('logout')}}"><li>Logout</li></a>
+                <a href="{{url_for('deposit_money')}}" class="{% if request.path == url_for('deposit_money') %} active {% endif %}"><li>Deposit Money</li></a>
+                <a href="{{url_for('withdraw_money')}}" class="{% if request.path == url_for('withdraw_money') %} active {% endif %}"><li>Withdraw Money</li></a>
+                <a href="{{url_for('book_appointment')}}" class="{% if request.path == url_for('book_appointment') %} active {% endif %}"><li>Book Appointment</li></a>
+                <a href="{{url_for('view_upcoming_appointments_patient')}}" class="{% if request.path == url_for('view_upcoming_appointments_patient') %} active {% endif %}">View Upcoming Appointments</a>
+                <a href="{{url_for('view_pending_payments')}}" class="{% if request.path == url_for('view_pending_payments') %} active {% endif %}"><li>Pending Payments</li></a>
+                <a href="{{url_for('view_payment_history')}}" class="{% if request.path == url_for('view_payment_history') %} active {% endif %}"><li>Payment History</li></a>
+                <a href="{{url_for('recieve_prescriptions')}}" class="{% if request.path == url_for('recieve_prescriptions') %} active {% endif %}"><li>Prescriptions</li></a>
+                <a href="{{url_for('process_payments')}}" class="{% if request.path == url_for('process_payments') %} active {% endif %}"><li>Process Payments</li></a>
+                <a href="{{url_for('view_patient_portal')}}" class="{% if request.path == url_for('view_patient_portal') %} active {% endif %}"><li>Patient Portal</li></a>
+                <a href="{{url_for('logout')}}" class="{% if request.path == url_for('logout') %} active {% endif %}"><li>Logout</li></a>
             </ul>
         </div>
     </div>

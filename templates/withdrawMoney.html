@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOP - Deposit Money</title>
+    <title>Withdraw Money - HOP</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
     <link rel="stylesheet" href="/static/style.css">
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" type="image/png" href="/static/favicon.png">
 </head>
 
 <body>
@@ -16,10 +16,10 @@
     <div class="form_container">
         <div class="form">
             <form method='POST'>
-                <label for="money_to_deposit">Amount To Deposit In USD:</label>
-                <input type="number" id="deposited_money" name="deposited_money" required>
+                <label for="money_to_withdraw">Amount To Withdraw In USD:</label>
+                <input type="number" id="withdrawn_money" name="withdrawn_money" required>
                 <br>
-                <button type="submit" class="button">Deposit</button>
+                <button type="submit" class="button">Withdraw</button>
                 {% if error %}
                 <p style="color: red; margin-top: 10px;">{{ error }}</p>
                 {% endif %}

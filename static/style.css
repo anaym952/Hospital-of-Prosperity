@@ -1,43 +1,50 @@
 
-/* GENERAL */
+/* **********GENERAL********** */
 
 *{
-   margin: 0px;
+    margin: 0px;
     padding: 0px;
     box-sizing: border-box;
 }
 
-body{
+html, body{
     background-color: rgb(240, 248, 255);
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 
-/* NAVBAR */
+
+/* **********NAVBAR********** */
 
 .navbar{
     display: flex;
     align-items: center;
     background-color: rgba(39, 215, 234, 0.541);
     justify-content: space-between;
-    /* height: 50px; */
+    padding: 5px 2px;
+    z-index: 1000;
 }
 
 .icon{
     display: flex;
     align-items: center;
+    margin-right: 10px;
 }
 
 .icon a{
     color: rgb(255, 0, 0);
     text-decoration: none;
-    /* align-items: center; */
+    display: flex;
+    align-items: center;
 }
 
 .icon h2{
     color: rgb(255, 0, 0);
     font-size: 20px;
-    cursor: default;
 }
 
 .icon a i{
@@ -55,61 +62,66 @@ body{
     display: flex;
     list-style: none;
     margin-right: 20px;
-    gap: 2px;
+    gap: 12px;
     align-items: center;
 }
 
 .options ul a{
     color: rgb(0, 0, 0);
     text-decoration: none;
-    /* border: none; */
     border-radius: 15px;
-    padding: 8px 8px 8px 8px;
+    padding: 4px 4px 4px 4px;
     font-size: 10.5px;
     text-align: center;
+    transition: 0.1s ease-in-out;
 }
 
 .options ul a:hover{
-    transition: 0.5s;
-    background-color: rgba(221, 255, 3, 0.477);
+    color: rgb(12, 66, 10);
+    font-weight: 650;
+    font-size: 11px;
+}
+
+.options ul a.active{
+    color: rgb(23, 155, 18);
+    font-weight: 650;
+    font-size: 11px;
 }
 
 
-/* FOOTER */
+
+/* **********FOOTER********** */
 
 .footer{
     background-color: rgba(143, 244, 255, 0.541);
     display: flex;
-    /* align-items: center; */
     justify-content: center;
-    padding: 10px 0px;
-    /* margin-top: auto; */
+    padding: 12px 0px;
 }
 
 .footer ul{
     list-style: none;
     display: flex;
     gap: 100px;
-    /* padding: 0;
-    margin: 0; */
 }
 
-/* .footer ul li{
-    text-align: center;
-} */
+.footer ul li{
+    font-weight: 500;
+}
 
 
-/* HOME PAGE */
+
+/* **********HOME PAGES********** */
 
 .welcome_container{
     display: flex;
     background-image: url(hospitalBackgroundImage.png);
-    /* background-repeat: no-repeat; */
     background-size: 100% 100%;
     align-items: center;
     justify-content: center;
     text-align: center;
-    height: 349px;
+    /* height: 349px; */
+    flex: 1;
     width: 100%;
 }
 
@@ -138,17 +150,23 @@ body{
 }
 
 
-/* OPTIONS */
+
+/* **********OPTIONS********** */
+
+/* FORMS */
 
 .form_container{
-    display: flex;
     align-items: center;
+    align-content: center;
     justify-content: center;
-    height: 349px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    flex: 1;
 }
 
 .form{
     display: flex;
+    align-items: center;
     flex-direction: column;
     gap: 20px;
     text-align: center;
@@ -178,9 +196,18 @@ body{
     transform: scale(1.1);
 }
 
+/* TABLES */
+
+.container{
+    flex: 1;
+    align-content: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
 
 
-/* DIFFERENT SCREEN SIZES */
+
+/* **********DIFFERENT SCREEN SIZES********** */
 
 @media (max-width: 501px) {
    .icon h2{
@@ -188,252 +215,3 @@ body{
    }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* GENERAL
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    background-color: rgb(240, 248, 255);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-/* NAVBAR */
-
-/* .navbar {
-    display: flex;
-    align-items: center;
-    background-color: rgba(39, 215, 234, 0.541);
-    justify-content: space-between;
-    padding: 10px 20px;
-    position: relative;
-    width: 100%; */
-    /* flex-wrap: wrap; */
-/* }
-
-.icon {
-    display: flex;
-    align-items: center;
-}
-
-.icon a {
-    color: rgb(255, 0, 0);
-    text-decoration: none;
-    align-items: center;
-}
-
-.icon h2 {
-    color: rgb(255, 0, 0);
-    font-size: 20px;
-    cursor: default;
-}
-
-.icon a i {
-    font-size: 40px;
-    margin: 0 10px;
-    color: rgb(255, 0, 0);
-}
-
-.icon a i:hover {
-    color: rgb(29, 203, 23);
-}
-
-.options ul {
-    display: flex;
-    list-style: none;
-    margin-right: 20px;
-    align-items: center;
-    gap: 15px;
-}
-
-.options ul a {
-    color: rgb(0, 0, 0);
-    text-decoration: none;
-    border: none;
-    border-radius: 15px;
-    padding: 8px;
-    font-size: 11px;
-    text-align: center;
-}
-
-.options ul a:hover {
-    transition: 0.5s;
-    background-color: rgba(221, 255, 3, 0.477);
-} */
-
-/* FOOTER */
-
-/* .footer {
-    background-color: rgba(155, 215, 241, 0.308);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 0;
-    margin-top: auto;
-}
-
-.footer ul {
-    list-style: none;
-    display: flex;
-    gap: 100px;
-    padding: 0;
-    margin: 0;
-}
-
-.footer ul li {
-    text-align: center;
-} */
-
-/* HOME PAGE */
-
-/* .welcome_container {
-    display: flex;
-    background-image: url(hospitalBackgroundImage.png);
-    background-repeat: no-repeat;
-    background-size: cover;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    height: 100vh;
-    width: 100%;
-}
-
-.welcome {
-    background-color: rgba(255, 255, 255, 0.842);
-    width: 60%;
-    border-radius: 5px;
-}
-
-.welcome ul {
-    list-style: none;
-    padding: 70px 0;
-    cursor: default;
-}
-
-.welcome h2 {
-    color: rgb(26, 75, 181);
-    margin-bottom: 5px;
-}
-
-#page_name {
-    color: rgb(255, 0, 0);
-    margin-top: 30px;
-    text-decoration: overline;
-    font-size: 25px;
-} */
-
-/* OPTIONS */
-
-/* .form_container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 340px;
-}
-
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
-}
-
-.form form input {
-    margin-bottom: 15px;
-}
-
-.button {
-    background-color: rgba(0, 255, 55, 0.658);
-    padding: 8px 10px;
-    font-size: 15px;
-    border: none;
-    border-radius: 15px;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-.button a {
-    color: rgb(0, 0, 0);
-    text-decoration: none;
-}
-
-.button:hover {
-    transition: 0.3s;
-    transform: scale(1.1);
-} */
-
-/* DIFFERENT SCREEN SIZES */
-
-/* @media (max-width: 768px) {
-    .icon h2 {
-        display: none;
-    }
-
-    .options ul {
-        margin-right: 0;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-    }
-
-    .options ul a {
-        font-size: 14px;
-        padding: 10px;
-    }
-}
-
-@media (max-width: 501px) {
-    .navbar {
-        flex-direction: column;
-        padding: 10px;
-    }
-
-    .icon h2 {
-        display: none;
-    }
-
-    .options ul {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-        margin-top: 10px;
-    }
-
-    .options ul a {
-        font-size: 12px;
-        padding: 8px;
-    }
-
-    .welcome {
-        width: 90%;
-        padding: 20px;
-    }
-
-    .footer ul {
-        flex-direction: column;
-        gap: 15px;
-    }
-} */
