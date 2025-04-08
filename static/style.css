@@ -102,13 +102,34 @@ html, body{
 .footer ul{
     list-style: none;
     display: flex;
-    gap: 100px;
+    gap: 150px;
 }
 
 .footer ul li{
     font-weight: 500;
 }
 
+.footer ul li i{
+    font-size: 20px;
+}
+
+.footer ul li a{
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    text-decoration: none;
+    color:rgb(0, 0, 0);
+}
+
+.email:hover{
+    transition: 0.2s;
+    color: rgba(255, 0, 0, 0.7);
+}
+
+.phone-number:hover{
+    transition: 0.2s;
+    color: rgb(60, 173, 19, 0.7);
+}
 
 
 /* **********HOME PAGES********** */
