@@ -551,17 +551,22 @@ def process_payments():
         # Debug:
         print(valid_paymend_id)
         print(payment_id)
-
+        print(payment_id)
         ### if payment ID doesn't exist at all currently
-        payment_id=payment_id
         if not any(payment_id == pending_payment['payment_id'] for pending_payment in pending_payments):
+            print(payment_id)
             valid_paymend_id = False
+            print(payment_id)
             error = f"Invalid payment ID."
+            print(payment_id)
             # Debug:
-            print(payment_id, type(payment_id))
+            print(f"{payment_id}", type(payment_id))
             print(pending_payment['payment_id'], type(pending_payment['payment_id']))
             print(error)
             print(valid_paymend_id)
+        
+        print()
+        print(payment_id)
 
         if valid_paymend_id:
             time.sleep(1)
