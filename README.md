@@ -1,4 +1,5 @@
-**This project may not be reproduced without the owner's consent.**
+***This project may not be reproduced without the owner's consent.***
+
 
 **To run the project in your local server:**
 
@@ -16,7 +17,9 @@
 **5.** Open a new terminal in the project folder in the directory in which it was cloned
 
 ****Optional****
+
 6. Run *python -m venv .venv* to setup the virtual environment
 
 ****Important****
+
 7. Run *python main.py* and follow the given link
