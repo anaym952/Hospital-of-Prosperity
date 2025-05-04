@@ -16,6 +16,7 @@
 **5.** Open a new terminal in the project folder in the directory in which it was cloned
 
 ****Optional****
+
 6. Run 'python -m venv .venv' to setup the virtual environment
 
 7. Run 'python main.py' and follow the given link
